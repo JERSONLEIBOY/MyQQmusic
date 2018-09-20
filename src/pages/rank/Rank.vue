@@ -1,21 +1,21 @@
 <template>
-  <div class="recommend">
-    这是推荐页面
+  <div class="rank">
+    这是排名页面
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'Recommend',
+  name: 'Rank',
   
 }
 </script>
 
 <style>
-	.recommend{
+	.rank{
 		position: fixed;
-		top:84px;
+		top:85px;
 		left: 0;
 		width: 100%;
 		height: 800px;

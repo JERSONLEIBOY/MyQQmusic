@@ -10,7 +10,7 @@ fastClick.attach(document.body)
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
+  el: '#app', 
+  render: h => h(App),
   router,
-  render: h => h(App)
 })

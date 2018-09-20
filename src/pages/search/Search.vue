@@ -1,21 +1,21 @@
 <template>
-  <div class="recommend">
-    这是推荐页面
+  <div class="search">
+    这是搜索页面
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'Recommend',
+  name: 'Search',
   
 }
 </script>
 
 <style>
-	.recommend{
+	.search{
 		position: fixed;
-		top:84px;
+		top:85px;
 		left: 0;
 		width: 100%;
 		height: 800px;
