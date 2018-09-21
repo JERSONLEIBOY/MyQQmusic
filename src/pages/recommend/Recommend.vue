@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {getRecommend} from '@/api/recommend'	//引入api的后台数据
+import {getRecommend,getDiscList} from '@/api/recommend'	//引入api的后台数据
 import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
 
 export default {
@@ -40,15 +40,26 @@ export default {
       }
   },
   mounted(){
-  	this._getRecommend()
+  	this._getRecommend()	//获取轮播图数据
+  	this._getDiscList()		//获取歌单数据
   },
   methods:{
+  	//获取轮播图数据
   	_getRecommend(){
   		//执行api的js方法
   		getRecommend().then((res)=>{
   			if(res.code === ERR_OK){
   				console.log(res.data.slider)
   				this.sliders = res.data.slider
+  			}
+  		})
+  	},
+  	//获取歌单数据
+  	_getDiscList(){
+  		//执行api中的js方法（一个模块可以多个方法）
+  		getDiscList().then((res)=>{
+  			if (res.code === ERR_OK) {
+  				console.log(res.data.list)
   			}
   		})
   	}
