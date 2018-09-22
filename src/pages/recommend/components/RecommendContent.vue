@@ -50,6 +50,10 @@ export default {
     padding: 20px 20px 10px 20px ;
     border-bottom: 1px solid rgba(7,17,27,0.1);
   }
+  .recommend-content ul li:last-child{
+
+    border-bottom: none;
+  }
 /*列表内容样式*/
   .recommend-content_img{
     flex: 0 0 60px;

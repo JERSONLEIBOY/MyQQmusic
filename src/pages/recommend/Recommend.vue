@@ -1,10 +1,12 @@
 <template>
-  <div class="recommend">
+  <scroll ref="scroll" class="recommend" :theData="discList">
+  <div>
   	<!--轮播图部分-->
-  	<recommend-swiper :sliders="sliders"></recommend-swiper>
+  	<recommend-swiper @imgload="imgload" :sliders="sliders"></recommend-swiper>
   	<!--歌单列表部分-->
   	<recommend-content :discList="discList"> </recommend-content>
   </div>
+  </scroll>
 </template>
 
 <script>
@@ -12,18 +14,20 @@ import {getRecommend,getDiscList} from '@/api/recommend'	//引入api的后台数
 import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
 import RecommendSwiper from './components/RecommendSwiper'
 import RecommendContent from './components/RecommendContent'
+import Scroll from '@/common/scroll/Scroll'
 
 export default {
   name: 'Recommend',
   data() {
       return {    	
         sliders:[],
-        discList:[]
+        discList:[],
       }
   },
   components:{
   	RecommendSwiper,
-  	RecommendContent
+  	RecommendContent,
+  	Scroll
   },
   mounted(){
   	this._getRecommend()	//获取轮播图数据
@@ -49,6 +53,15 @@ export default {
   				this.discList = res.data.list
   			}
   		})
+  	},
+
+  	//当图片不设置成按浏览器比例占位的话
+  	//可能轮播图的加载比列表数据久，导致scroll的高度没有计算轮播图
+  	//解决方法，监听轮播图完成了再刷新scroll
+  	imgload(things){
+  		//子组件完成图片加载触发刷新
+  		console.log(things)
+  		this.$refs.scroll.refresh()
   	}
   }
 
@@ -60,6 +73,8 @@ export default {
 		position: fixed;
 		top:84px;
 		left: 0;
+		bottom: 0;
+		overflow: hidden;
 		width: 100%;
 	}
 	

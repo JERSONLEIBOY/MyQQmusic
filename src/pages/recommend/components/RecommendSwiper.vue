@@ -4,7 +4,7 @@
       <swiper :options="swiperOption" ref="mySwiper">
         <!-- 轮播图内容 -->
         <swiper-slide v-for="item of sliders" :key="item.id">
-          <img :src="item.picUrl">
+          <img @load="loadImage" :src="item.picUrl">
         </swiper-slide>
         <!-- 轮播图小部件 -->
         <div class="swiper-pagination"  slot="pagination"></div>
@@ -38,6 +38,15 @@ export default {
           observer:true     //原因：首次加载的区域计算，使显示错误
         }
       }
+  },
+  methods:{
+    loadImage(){
+      //因为图片是遍历循环的，我们只要第一次，即可
+      if(!this.isOthers){
+        this.$emit('imgload', '图片加载完成')
+        this.isOthers = true
+      }
+    }
   }
 }
 </script>
