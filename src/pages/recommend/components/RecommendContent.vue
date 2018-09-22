@@ -6,7 +6,7 @@
     <ul>
       <li v-for="item of discList" :key="item.listennum">
         <div class="recommend-content_img">
-          <img width="60" height="60" :src="item.imgurl" />
+          <img width="60" height="60" v-lazy="item.imgurl" />
         </div>
         <div class="recommend-content_text">
           <h2>{{item.creator.name}}</h2>
@@ -14,10 +14,15 @@
         </div>
       </li>
     </ul>
+    <!--加载中 公共组件-->
+    <div class="recommend-loading">
+      <loading v-show="!discList.length"></loading>
+    </div>
   </div>
 </template>
 
 <script>
+import Loading from '@/common/loading/loading'
 
 export default {
   name: 'RecommendContent',
@@ -25,6 +30,9 @@ export default {
     discList:{
       type:Array
     }
+  },
+  components:{
+    Loading
   },
   data() {
       return {        
@@ -76,5 +84,11 @@ export default {
   .recommend-content_text p{
     color: rgb(7,17,27,0.6);
     font-size: 12px;
+  }
+/*加载中组件位置*/
+  .recommend-loading{
+    margin-top: 30px;
+    width: 100%;
+      
   }
 </style>

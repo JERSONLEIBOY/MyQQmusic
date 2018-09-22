@@ -4,7 +4,7 @@
   	<!--轮播图部分-->
   	<recommend-swiper @imgload="imgload" :sliders="sliders"></recommend-swiper>
   	<!--歌单列表部分-->
-  	<recommend-content :discList="discList"> </recommend-content>
+  	<recommend-content :discList="discList"> </recommend-content>  
   </div>
   </scroll>
 </template>
@@ -15,6 +15,7 @@ import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
 import RecommendSwiper from './components/RecommendSwiper'
 import RecommendContent from './components/RecommendContent'
 import Scroll from '@/common/scroll/Scroll'
+
 
 export default {
   name: 'Recommend',
@@ -27,7 +28,7 @@ export default {
   components:{
   	RecommendSwiper,
   	RecommendContent,
-  	Scroll
+  	Scroll,
   },
   mounted(){
   	this._getRecommend()	//获取轮播图数据
@@ -77,5 +78,5 @@ export default {
 		overflow: hidden;
 		width: 100%;
 	}
-	
+
 </style>
