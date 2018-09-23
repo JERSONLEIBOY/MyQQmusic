@@ -1,23 +1,23 @@
 <template>
-  <div class="singer">
-    <div>
-    	<h1>{{hot.title}}</h1>
-    	<ul>
-    		<li v-for="item of hot.item">
-    			<img width="60" height="60" v-lazy="item.singer_pic" />
-    			{{item.name}}
-    		</li>
-    	</ul>   	
-    </div>
-  </div>
+	<scroll class="singer" :theData="hot.item">
+	  <div>
+	    <singer-content :hot="hot"></singer-content>
+	  </div>
+	</scroll>
 </template>
 
 <script>
 import {getSingers} from '@/api/singer'	//引入api的后台数据
 import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
+import SingerContent from './components/SingerContent'
+import Scroll from '@/common/scroll/Scroll'
 
 export default {
   name: 'Singer',
+  components:{
+  	SingerContent,
+  	Scroll
+  },
   data(){
   	return {
   		singerlist:[],
@@ -73,11 +73,10 @@ export default {
 
 <style>
 	.singer{
-		position: fixed;
+		position: absolute;
 		top:85px;
 		left: 0;
+		bottom: 0;
 		width: 100%;
-		height: 800px;
-		background-color: #eee;
 	}
 </style>

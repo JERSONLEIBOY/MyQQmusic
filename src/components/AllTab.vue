@@ -40,6 +40,7 @@ export default {
 
 <style>
   .alltab{
+    z-index: 99;
     position: fixed;
     top: 44px;
     left: 0;
