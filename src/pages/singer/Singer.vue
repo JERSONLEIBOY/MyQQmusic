@@ -3,6 +3,7 @@
 	  <div>
 	    <singer-content :hot="hot"></singer-content>
 	  </div>
+	  <router-view/>
 	</scroll>
 </template>
 
