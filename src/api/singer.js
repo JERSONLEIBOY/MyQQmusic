@@ -3,7 +3,7 @@
 */
 
 import jsonp from '@/common/js/jsonp'	//引入jsonp模块
-import {commonParams,object,test} from './config'
+import {commonParams,object} from './config'
 import axios from 'axios'
 
 //方法js不做成defaul，vue引入时要单花括号
@@ -50,5 +50,29 @@ export function getSingers(){
 		//console.log(res.data)
 		return Promise.resolve(res.data)
 	})
+}
+
+
+//歌手详情页面数据
+export function getSingerDetail(id){
+	//自己判断截取出url前半段
+	//？？？这里我是从XHR中的json中拿到的，不是jsonp？？？
+	const urlfront = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
+	//把hash做成对象,es6创建对象并赋值,
+	//hash获取不了，要手动输入所有，把对象分2类，固定和不固定
+	//固定的hash写在变量js模块里， config.js
+	const thehash = Object.assign({},commonParams,{
+		platform: 'h5page',
+		needNewCode: 1,
+		order: 'listen',
+		from: 'h5',
+		format: 'jsonp',
+		num: 100,
+		begin: 0,
+		singerid:id,
+	})
+	console.log(thehash)
+	//执行jsonp模块
+	return jsonp(urlfront,thehash,object)
 }
 

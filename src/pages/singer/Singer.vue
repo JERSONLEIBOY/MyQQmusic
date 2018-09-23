@@ -1,9 +1,13 @@
 <template>
 	<scroll class="singer" :theData="hot.item">
 	  <div>
-	    <singer-content :hot="hot"></singer-content>
+	    <singer-content @clickSinger="clickSinger" :hot="hot"></singer-content>
 	  </div>
+<<<<<<< HEAD
 	  <router-view/>
+=======
+    <router-view :singerid="singerId" />
+>>>>>>> singer-detail
 	</scroll>
 </template>
 
@@ -22,12 +26,12 @@ export default {
   data(){
   	return {
   		singerlist:[],
-  		hot:{}
+  		hot:{},
+      singerId:0
   	}
   },
-  mounted(){
-  	this._getSingers()
-  	
+  created(){
+  	this._getSingers() 
   },
   methods:{
   	//获取轮播图数据
@@ -62,7 +66,11 @@ export default {
   		})
   		console.log(map.hot)
   		this.hot = map.hot
-  	}
+  	},
+    clickSinger(singer){
+      this.singerId = singer
+      console.log('点击父组件获取'+this.singerId)
+    }
   },
   watch:{
   	singerlist(){

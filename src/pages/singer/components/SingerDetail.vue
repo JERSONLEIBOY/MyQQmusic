@@ -1,6 +1,10 @@
 <template>
   <div class="singer-detail">
+<<<<<<< HEAD
     歌手详情页
+=======
+    歌手详情页{{singerid}}
+>>>>>>> singer-detail
     <!--加载中 公共组件-->
     <div class="singer-loading">
       <loading v-show="false"></loading>
@@ -9,10 +13,16 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+=======
+import {getSingerDetail} from '@/api/singer'  //引入api的后台数据
+import {ERR_OK} from '@/api/config' //引入自定义的公共变量
+>>>>>>> singer-detail
 import Loading from '@/common/loading/loading'
 
 export default {
   name: 'SingerDetail',
+<<<<<<< HEAD
   props:{
     
   },
@@ -22,6 +32,32 @@ export default {
   data() {
       return {        
       }
+=======
+  components:{
+    Loading
+  },
+  props:{
+    singerid:{
+      type:Number,
+      default:0
+    }
+  },
+  created(){
+      this._getSingerDetail()
+  },
+  methods:{
+
+    _getSingerDetail(){
+      //执行api的js方法
+      console.log(this.singerid)
+      getSingerDetail(this.singerid).then((res)=>{
+        if(res.code === ERR_OK){
+          console.log(res.data.list)
+          //this.sliders = res.data.slider
+        }
+      })
+    }
+>>>>>>> singer-detail
   }
 }
 </script>
