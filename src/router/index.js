@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Recommend from '@/pages/recommend/Recommend'
 import Singer from '@/pages/singer/Singer'
+import SingerDetail from '@/pages/singer/components/SingerDetail'
 import Rank from '@/pages/rank/Rank'
 import Search from '@/pages/search/Search'
 
@@ -21,7 +22,12 @@ export default new Router({
     {
       path: '/singer',
       name: 'Singer',
-      component: Singer
+      component: Singer,
+      children:[{
+        path: '/singer/:id',
+        name: 'SingerDetail',
+        component: SingerDetail,
+      }]
     },
     {
       path: '/rank',

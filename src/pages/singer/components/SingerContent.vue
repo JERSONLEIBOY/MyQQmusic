@@ -2,10 +2,14 @@
   <div class="singer-content">
     <ul>
       <h1>{{hot.title}}</h1>
-      <li v-for="item of hot.item">
+      <router-link 
+        tag="li" :to="'/singer/'+item.id" 
+        v-for="item of hot.item"
+        @click.native="handleSinger(item.id)"
+      >
         <img width="50" height="50" v-lazy="item.singer_pic" />
         <p>{{item.name}}</p>
-      </li> 
+      </router-link> 
     </ul> 
     <!--加载中 公共组件-->
     <div class="singer-loading">
@@ -27,9 +31,10 @@ export default {
   components:{
     Loading
   },
-  data() {
-      return {        
-      }
+  methods:{
+    handleSinger(singer){
+      this.$emit('clickSinger',singer)
+    }
   }
 }
 </script>
