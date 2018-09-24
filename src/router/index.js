@@ -26,11 +26,7 @@ export default new Router({
       children:[{
         path: '/singer/:id',
         name: 'SingerDetail',
-<<<<<<< HEAD
-        component: SingerDetail
-=======
         component: SingerDetail,
->>>>>>> singer-detail
       }]
     },
     {

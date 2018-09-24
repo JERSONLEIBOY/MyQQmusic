@@ -3,11 +3,7 @@
 	  <div>
 	    <singer-content @clickSinger="clickSinger" :hot="hot"></singer-content>
 	  </div>
-<<<<<<< HEAD
-	  <router-view/>
-=======
     <router-view :singerid="singerId" />
->>>>>>> singer-detail
 	</scroll>
 </template>
 

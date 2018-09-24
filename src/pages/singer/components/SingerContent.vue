@@ -2,15 +2,11 @@
   <div class="singer-content">
     <ul>
       <h1>{{hot.title}}</h1>
-<<<<<<< HEAD
-      <router-link tag="li" :to="'/singer/'+item.id" v-for="item of hot.item">
-=======
       <router-link 
         tag="li" :to="'/singer/'+item.id" 
         v-for="item of hot.item"
         @click.native="handleSinger(item.id)"
       >
->>>>>>> singer-detail
         <img width="50" height="50" v-lazy="item.singer_pic" />
         <p>{{item.name}}</p>
       </router-link> 
