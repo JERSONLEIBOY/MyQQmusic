@@ -16,6 +16,7 @@ import {getSingerDetail} from '@/api/singer'  //引入api的后台数据
 import {ERR_OK} from '@/api/config' //引入自定义的公共变量
 import Loading from '@/common/loading/loading'
 import {mapGetters} from 'vuex'
+import {createSong} from '@/common/js/song.js'
 
 export default {
   name: 'SingerDetail',
@@ -27,23 +28,40 @@ export default {
         'singer'
       ])
   },
+  data(){
+    return {
+      songs : []
+    }
+  },
   created(){
     //console.log(this.singer.id)
     this._getSingerDetail()
   },
   methods:{
-
+    //数据获取方法，执行api的js方法    
     _getSingerDetail(){
-      //执行api的js方法
       //获取数据的歌手id不是通过子组件传递父组件，再传递进来当前组件
       //而是通过子组件存入数据进store。当前组件引入store
-      console.log(this.singer.id)
+      //数据需要提取，封装成一个类（其他页面的数据也要这样处理）
+      //console.log(this.singer.id)
       getSingerDetail(this.singer.id).then((res)=>{
         if(res.code === ERR_OK){
-          console.log(res.data.list)
-          //this.sliders = res.data.slider
+          //console.log(res.data.list)
+          this.songs = this._normalizeSongs(res.data.list)  //数据提取方法
+          //console.log(this.songs)
         }
       })
+    },
+    //数据提取方法，引入类
+    _normalizeSongs(list){
+      let ret = []  //新建空数组，push进提取的数据
+      list.forEach((item)=>{
+        let musicData = item.musicData  //let {musicData} = item  //初步提取数据
+        if(musicData.songid && musicData.albummid){
+          ret.push(createSong(musicData)) //不需要一个一个new传值
+        }
+      })
+      return ret
     }
   }
 }
