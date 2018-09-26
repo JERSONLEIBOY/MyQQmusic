@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import './assets/styles/reset.css'	//引入移动端重置css
 import fastClick from 'fastclick'	//引入300毫秒延迟插件
 import VueAwesomeSwiper from 'vue-awesome-swiper'	//引入轮播插件
@@ -25,4 +26,5 @@ new Vue({
   el: '#app', 
   render: h => h(App),
   router,
+  store
 })

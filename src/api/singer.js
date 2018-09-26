@@ -71,7 +71,7 @@ export function getSingerDetail(id){
 		begin: 0,
 		singerid:id,
 	})
-	console.log(thehash)
+	//console.log(thehash)
 	//执行jsonp模块
 	return jsonp(urlfront,thehash,object)
 }

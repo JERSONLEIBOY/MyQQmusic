@@ -45,7 +45,7 @@ export default {
 
     //外部组件，获取到这个公共组件的dom可以使用这里的方法
     refresh(){
-      console.log('轮播图加载完成，执行刷新scroll')
+      //console.log('轮播图加载完成，执行刷新scroll')
       this.scroll && this.scroll.refresh()
     },
 
@@ -54,7 +54,7 @@ export default {
   watch:{
     theData(){
       setTimeout(()=>{
-        console.log('数据传递进来，刷新scroll')
+        //console.log('数据传递进来，刷新scroll')
         this.refresh()
       },20)
     }

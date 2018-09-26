@@ -3,7 +3,7 @@
 	  <div>
 	    <singer-content @clickSinger="clickSinger" :hot="hot"></singer-content>
 	  </div>
-    <router-view :singerid="singerId" />
+    <router-view/>
 	</scroll>
 </template>
 
@@ -12,6 +12,7 @@ import {getSingers} from '@/api/singer'	//引入api的后台数据
 import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
 import SingerContent from './components/SingerContent'
 import Scroll from '@/common/scroll/Scroll'
+import {mapMutations} from 'vuex' //引入存数据进store的方法
 
 export default {
   name: 'Singer',
@@ -64,9 +65,16 @@ export default {
   		this.hot = map.hot
   	},
     clickSinger(singer){
-      this.singerId = singer
-      console.log('点击父组件获取'+this.singerId)
-    }
+      //子组件点击触发父组件事件，跳转路由，并传入数据进store
+      this.$router.push({
+        path: `/singer/${singer.id}`  //es6语法，详情页的动态路由
+      })
+      //调用store方法，存入数据参数
+      this.setSinger(singer)
+    },
+    ...mapMutations({
+      setSinger:'SET_SINGER'  //用到事件名
+    })
   },
   watch:{
   	singerlist(){
