@@ -1,5 +1,5 @@
 <template>
-  <div id="scroll" ref="wrapper">
+  <div ref="wrapper">
     <slot></slot>
   </div>
 </template>
@@ -20,6 +20,10 @@ export default {
       type:Boolean,
       default:true
     },
+    listenScroll: {
+      type: Boolean,
+      default: false
+    },
     //传入数据，用于监听是否渲染完成，就refresh
     theData:{
       type:Array,
@@ -37,9 +41,16 @@ export default {
       if(!this.$refs.wrapper){
         return 
       }
-      this.scroll = new BScroll(this.$refs.wrapper),{
+      this.scroll = new BScroll(this.$refs.wrapper,{
         probeType:this.probeType,
         click:this.click
+      })
+
+      if (this.listenScroll) {
+        let me = this
+        this.scroll.on('scroll', (pos) => {
+          me.$emit('scroll', pos)
+        })
       }
     },
 

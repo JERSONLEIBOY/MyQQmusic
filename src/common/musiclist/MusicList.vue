@@ -13,20 +13,44 @@
     </div>
 
     <!--歌曲列表组件-->
-    <scroll :theData="songs" ref="songslist" class="songlist-wrapper">
-      <div >
-        <song-list :songs="songs"></song-list>
+    <div class="wrapper-songlist" ref="songslist">
+      <scroll 
+        :theData="songs" 
+        :probe-type="probeType" 
+        :listen-scroll="listenScroll" 
+        @scroll="scroll"
+         
+        class="songlist-wrapper"
+      >
+        <div>
+          <song-list :songs="songs"></song-list>
+        </div>
+      </scroll>
+
+      <!--加载中 公共组件-->
+      <div class="songslist-loading">
+        <loading v-show="!songs.length"></loading>
       </div>
-    </scroll>
+    </div>
+
+    
   </div>
 </template>
 <script type="text/ecmascript-6">
 import SongList from './components/SongList'
 import Scroll from '@/common/scroll/Scroll'
+import Loading from '@/common/loading/loading'
+
   export default {
     components:{
       SongList,
-      Scroll
+      Scroll,
+      Loading
+    },
+    data(){
+      return{
+        scrollY:0,
+      } 
     },
     props: {
       title:{
@@ -44,9 +68,38 @@ import Scroll from '@/common/scroll/Scroll'
         return `background-image:url(${this.bgimg})`
       }
     },
+    methods:{
+      scroll(pos){
+        this.scrollY = pos.y
+      }
+    },
+    watch:{
+      scrollY(newY){
+        const percent = Math.abs(newY / this.$refs.bgimg.clientHeight)
+        //超过顶部时，定住数值
+        if(newY <= -184){
+          //this.$refs.songslist.style.top = 40+'px'
+          this.$refs.songslist.style.transform =  `translate3d(0,-184px,0)`
+          //console.log(this.$refs.songslist.style.top)
+        }else if(newY> -184 && newY<0){
+          this.$refs.songslist.style.transform =  `translate3d(0,${newY}px,0)`
+          //console.log(this.$refs.songslist.style.top)
+        }else{
+          //拉伸图片
+          let scale = 1+percent
+          this.$refs.bgimg.style.webkitTransform =  `scale${scale}`
+        }
+        
+      }
+    },
+    created(){
+      this.listenScroll=true,
+      this.probeType=3
+    },
     //生命周期把列表的top定位为图片dom的高
     mounted(){
-      this.$refs.songslist.$el.style.top =  `${this.$refs.bgimg.clientHeight}px`
+      //this.$refs.songslist.style.transform = `translate3d(0,${this.$refs.bgimg.clientHeight}px,0)`
+      //this.$refs.songslist.style.top =  `${this.$refs.bgimg.clientHeight}px`
     }
   }
 </script>
@@ -102,16 +155,21 @@ import Scroll from '@/common/scroll/Scroll'
   }
 /*随机播放按钮*/
   .musiclist-play-wrapper{
+    z-index: 50;
     position: absolute;
     bottom: 20px;
-    width: 100%;
+    left: 10%;
+    width: 80%;
+    align-items: center;
     text-align: center;
   }
   .musiclist-play{
-    border:1px solid red;
-    border-radius: 6px;
+    background-color: #31c27c;
+    color: #fff;
+    border-radius:50px;
     width: 120px;
-    padding: 2px 0;
+    margin: 0 auto;
+    padding: 10px 0;
   }
   .musiclist-play span{
     display: inline-block;
@@ -125,12 +183,27 @@ import Scroll from '@/common/scroll/Scroll'
     font-size: 12px;
   }
 /*滚动列表的样式定位*/
+  .wrapper-songlist{
+    z-index: 50;
+    position: relative;
+    height: 100%;
+    background-color: #fff; 
+  }
   .songlist-wrapper{
-    position: fixed;
+    z-index: 50;
+    position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    overflow: hidden; 
+    overflow: hidden;
+  }
+/*加载中组件位置*/
+  .songslist-loading{
+    z-index: 50;
+    position: absolute;
+    top:50px;
+
+    width: 100%;
   }
 </style>

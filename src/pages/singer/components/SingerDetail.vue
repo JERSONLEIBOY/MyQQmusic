@@ -4,7 +4,7 @@
     <music-list :title="singer.name" :bgimg="singer.singer_pic" :songs="songs"></music-list>
     <!--加载中 公共组件-->
     <div class="singer-loading">
-      <loading v-show="false"></loading>
+      <loading v-show="singer"></loading>
     </div>
   </div>
 </transition>
