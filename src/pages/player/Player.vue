@@ -1,5 +1,6 @@
 <template>
   <div class="player" v-show="playlist.length>0">
+  	<transition name="normal">
     <div class="player-normal" v-show="fullScreen">
     	<div class="player-normal_background" v-if="currentSong.image">
     		<img width="100%" height="100%" :src="currentSong.image">
@@ -26,6 +27,9 @@
     		<span>♥</span>
     	</div>
 	</div>
+	</transition>
+
+	<transition name="mini">
 	<div class="player-mini" @click="open" v-show="!fullScreen">
     	<div class="player-mini_img" v-if="currentSong.image">
     		<img width="40" height="40" :src="currentSong.image">
@@ -38,6 +42,7 @@
     		<span>乱</span>
     	</div>
 	</div>
+	</transition>
   </div>
 </template>
 
@@ -237,5 +242,43 @@ export default {
 		line-height: 25px;
 		font-size: 14px;
 		color: #31c27c;
+	}
+/*播放器动画样式*/
+	.normal-enter-active, .normal-leave-active{
+		transition: all 1s;
+	}
+	.normal-enter,.normal-leave-to{
+		opacity: 0;
+	}
+	/*内部个别样式变化--头部*/
+	.normal-enter-active .player-normal_top,
+	.normal-enter-active .player-normal_buttom,
+	.normal-leave-active .player-normal_top,
+	.normal-leave-active .player-normal_buttom,{
+		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+	}
+
+	.normal-enter-active .player-normal_top{
+		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+		transform: translate3d(0,-100px,0);
+	}
+	.normal-leave-active .player-normal_top{
+		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+		transform: translate3d(0,-100px,0);
+	}
+	/*内部个别样式变化--底部*/
+	.normal-enter-active .player-normal_buttom{
+		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+		transform: translate3d(0,100px,0);
+	}
+	.normal-leave-active .player-normal_buttom{
+		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+		transform: translate3d(0,100px,0);
+	}
+	.mini-enter-active, .mini-leave-active{
+		transition: all 0.4s;
+	}
+	.mini-enter,.mini-leave-to{
+		opacity: 0;
 	}
 </style>

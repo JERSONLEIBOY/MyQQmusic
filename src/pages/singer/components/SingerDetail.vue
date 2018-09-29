@@ -85,8 +85,8 @@ export default {
     overflow: hidden;
   }
 /*动画样式*/
-  .slide-enter-active, .slide-leave-sctive{
-    transition: all 0.3s
+  .slide-enter-active, .slide-leave-active{
+    transition: all 0.3s;
   }
   .slide-enter, .slide-leave-to{
     transform: translate3d(100%,0,0);
