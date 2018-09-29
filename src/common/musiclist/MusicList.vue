@@ -23,7 +23,7 @@
         class="songlist-wrapper"
       >
         <div>
-          <song-list :songs="songs"></song-list>
+          <song-list @select="selectItem" :songs="songs"></song-list>
         </div>
       </scroll>
 
@@ -40,6 +40,7 @@
 import SongList from './components/SongList'
 import Scroll from '@/common/scroll/Scroll'
 import Loading from '@/common/loading/loading'
+import {mapActions} from 'vuex'
 
   export default {
     components:{
@@ -71,7 +72,15 @@ import Loading from '@/common/loading/loading'
     methods:{
       scroll(pos){
         this.scrollY = pos.y
-      }
+      },
+      //获取子组件传递的点击数据信息
+      selectItem(item,index){
+        //把这些数据存入vuex中的mutations（一个动作使用多个mutation，使用actions）
+        this.selectPlay({list:this.songs,index:index})
+      },
+      ...mapActions([
+          'selectPlay'
+      ])
     },
     watch:{
       scrollY(newY){

@@ -1,7 +1,7 @@
 <template>
   <div class="songlist" >
     <ul>
-      <li v-for="item of songs">
+      <li v-for="(item,index) of songs" @click="selectItem(item,index)">
         <div class="songlist-text">
           <h2>{{item.name}}</h2>
           <p>{{getDesc(item)}}</p>
@@ -26,6 +26,10 @@ export default {
   methods:{
     getDesc(song){
       return `${song.singer}·${song.album}`
+    },
+    //点击获取li的数据信息传给父组件
+    selectItem(item,index){
+      this.$emit('select',item,index)
     }
   }
  
