@@ -19,18 +19,18 @@
     	<div class="player-normal_middle">
     		<div class="player-normal_middle-l">
     			<div class="player-normal_middle-cdwrapper" ref="cdWrapper">
-    				<div class="player-normal_middle-cd">
+    				<div class="player-normal_middle-cd" :class="playCd">
     					<img :src="currentSong.image">
     				</div>
     			</div>
     		</div>   		
     	</div>
     	<div class="player-normal_buttom">
-    		<span>=</span>
-    		<span><</span>
-    		<span>||</span>
-    		<span>></span>
-    		<span>♥</span>
+    		<span class="iconfont">&#xe672;</span>
+    		<span class="iconfont">&#xe62c;</span>
+    		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
+    		<span class="iconfont">&#xe62d;</span>
+    		<span class="iconfont">&#xe672;</span>
     	</div>
 	</div>
 	</transition>
@@ -38,14 +38,15 @@
 	<transition name="mini">
 	<div class="player-mini" @click="open" v-show="!fullScreen">
     	<div class="player-mini_img" v-if="currentSong.image">
-    		<img width="40" height="40" :src="currentSong.image">
+    		<img :class="playCd" width="40" height="40" :src="currentSong.image">
     	</div>
     	<div class="player-mini_text">
     		<h2>{{currentSong.name}}</h2>
     		<p>{{currentSong.singer}}</p>
     	</div>
     	<div class="player-mini_control">
-    		<span>乱</span>
+    		<span class="iconfont" :class="playIcon" @click.stop="togglePlaying"></span>
+    		<span class="iconfont">&#xe672;</span>
     	</div>
 	</div>
 	</transition>
@@ -55,10 +56,7 @@
 </template>
 
 <script>
-/*@enter="enter"
-  		@after-enter="afterEnter"
-  		@leave="leave"
-  		@after-leave="afterLeave"*/
+
 /**
  *从vuex中getters映射的state中获取数据
 */
@@ -69,10 +67,19 @@ import animations from 'create-keyframe-animation'
 export default {
   name: 'Player',
   computed:{
+  	//图标计算属性
+  	playIcon(){
+  		return this.playing ? 'icon-zanting' : 'icon-bofang'
+  	},
+  	//唱片动态样式计算属性
+  	playCd(){
+  		return this.playing ? 'player-normal_middle-cd--playing' : 'player-normal_middle-cd--playing player-normal_middle-cd--pause'
+  	},
   	...mapGetters([
   		'fullScreen',	//判断转开的是大页面还是小组件
   		'playlist',	//数据和判断整个组件是否展示
-  		'currentSong'	//当前歌曲的数据渲染进页面
+  		'currentSong',	//当前歌曲的数据渲染进页面
+  		'playing',	//播放状态，布尔值
   	])
   },
   methods:{
@@ -154,10 +161,14 @@ export default {
   		animations.unregisterAnimation('moveback')
   		this.$refs.cdWrapper.style.animation = ''
   	},
-  	//
+  	//控制播放
+  	togglePlaying(){
+  		this.setPlayingState(!this.playing)
+  	},
   	/*存入点击事件触发的是否展示数据*/
   	...mapMutations({
-  		setFullScreen:'SET_FULL_SCREEN'
+  		setFullScreen:'SET_FULL_SCREEN',
+  		setPlayingState:'SET_PLAYING_STATE'
   	})
   },
   //监听当前歌曲改变时播放音乐
@@ -165,10 +176,19 @@ export default {
 
   	currentSong(){
   		this.$nextTick(()=>{
-  			console.log(this.currentSong.url)
+  			//console.log(this.currentSong.url)
   			this.$refs.audio.play()
+  		})		
+  	},
+  	playing(item){
+  		this.$nextTick(()=>{
+  			const audio = this.$refs.audio
+  			if(item){
+  				audio.play()
+  			}else{
+  				audio.pause()
+  			}
   		})
-  		
   	}
   }
 }
@@ -275,19 +295,12 @@ export default {
 		position: absolute;
 		bottom: 60px;
 		width: 100%;
-		margin:0 40px;
+		margin:0 50px;
 	}
 	.player-normal_buttom span{
 		display: inline-block;
-		box-sizing: border-box;
-		width: 40px;
-		height: 40px;
-		line-height: 40px;
-		text-align: center;
-		font-size: 24px;
+		font-size: 38px;
 		color: #31c27c;
-		border-radius: 50%;
-		border: 2px solid #31c27c;
 		margin-right: 5px;
 	}
 /*小播放器部件*/
@@ -329,16 +342,17 @@ export default {
 		color: #fff;
 	}
 	.player-mini_control{
-		flex: 0 0 30px;
-		width: 30px;
-		padding: 0 10px;
+		flex: 0 0 80px;
+		width: 80px;
+		height: 100%;
+		text-align: center;
+		padding: 25px 10px 0 0;
 	}
 	.player-mini_control span{
 		display: inline-block;
-		width: 25px;
-		height: 25px;
-		line-height: 25px;
-		font-size: 14px;
+		margin-right: 5px;
+		font-size: 32px;
+		line-height: 100%;
 		color: #31c27c;
 	}
 /*播放器动画样式*/
@@ -373,5 +387,16 @@ export default {
 	}
 	.mini-enter,.mini-leave-to{
 		opacity: 0;
+	}
+/*唱片旋转动画*/
+	.player-normal_middle-cd--playing{
+		animation: rotate 20s linear infinite;	/*参数（动作，时间，线性，无限循环）*/
+	}
+	.player-normal_middle-cd--pause{
+		animation-play-state: paused; 	/*内置暂停动作*/
+	}
+	@keyframes rotate{
+		0%{transform: rotate(0);}
+		100%{transform: rotate(360deg);}
 	}
 </style>
