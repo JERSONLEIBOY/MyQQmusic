@@ -1,6 +1,9 @@
 <template>
   <div class="player" v-show="playlist.length>0">
-  	<transition name="normal">
+  	<transition 
+  		name="normal"
+  		
+  	>
     <div class="player-normal" v-show="fullScreen">
     	<div class="player-normal_background" v-if="currentSong.image">
     		<img width="100%" height="100%" :src="currentSong.image">
@@ -47,6 +50,10 @@
 </template>
 
 <script>
+/*@enter="enter"
+  		@after-enter="afterEnter"
+  		@leave="leave"
+  		@after-leave="afterLeave"*/
 /**
  *从vuex中getters映射的state中获取数据
 */
@@ -68,6 +75,21 @@ export default {
   	},
   	open(){
   		this.setFullScreen(true)
+  	},
+  	/*动画钩子,引用插件，以js写css的边界*/
+  	enter(el,done){
+  		//done是回调函数，当done执行就会跳到下一个钩子
+
+
+  	},
+  	afterEnter(){
+
+  	},
+  	leave(el,done){
+
+  	},
+  	afterLeave(){
+
   	},
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN'
@@ -250,31 +272,26 @@ export default {
 	.normal-enter,.normal-leave-to{
 		opacity: 0;
 	}
-	/*内部个别样式变化--头部*/
-	.normal-enter-active .player-normal_top,
-	.normal-enter-active .player-normal_buttom,
-	.normal-leave-active .player-normal_top,
-	.normal-leave-active .player-normal_buttom,{
-		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+/*内部个别样式变化*/
+	.player-normal_top, .player-normal_buttom{
+		transition: all 1s cubic-bezier(0.86,0.18,0.82,1.32);
 	}
-
-	.normal-enter-active .player-normal_top{
-		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+	/*内部个别样式变化--头部*/
+	.normal-enter .player-normal_top{
 		transform: translate3d(0,-100px,0);
 	}
-	.normal-leave-active .player-normal_top{
-		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+	.normal-leave-to .player-normal_top{
 		transform: translate3d(0,-100px,0);
 	}
 	/*内部个别样式变化--底部*/
-	.normal-enter-active .player-normal_buttom{
-		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+	.normal-enter .player-normal_buttom{
 		transform: translate3d(0,100px,0);
 	}
-	.normal-leave-active .player-normal_buttom{
-		transition: all 2s cubic-bezier(0.86,0.18,0.82,1.32);
+	.normal-leave-to .player-normal_buttom{
 		transform: translate3d(0,100px,0);
 	}
+
+	/*小部件的动画*/
 	.mini-enter-active, .mini-leave-active{
 		transition: all 0.4s;
 	}
