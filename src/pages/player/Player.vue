@@ -2,10 +2,13 @@
   <div class="player" v-show="playlist.length>0">
   	<transition 
   		name="normal"
-  		
+  		@enter="enter"
+  		@after-enter="afterEnter"
+  		@leave="leave"
+  		@after-leave="afterLeave"
   	>
     <div class="player-normal" v-show="fullScreen">
-    	<div class="player-normal_background" v-if="currentSong.image">
+    	<div class="player-normal_background">
     		<img width="100%" height="100%" :src="currentSong.image">
     	</div>
     	<div class="player-normal_top">
@@ -15,8 +18,8 @@
     	</div>
     	<div class="player-normal_middle">
     		<div class="player-normal_middle-l">
-    			<div class="player-normal_middle-cdwrapper">
-    				<div class="player-normal_middle-cd" v-if="currentSong.image">
+    			<div class="player-normal_middle-cdwrapper" ref="cdWrapper">
+    				<div class="player-normal_middle-cd">
     					<img :src="currentSong.image">
     				</div>
     			</div>
@@ -59,6 +62,7 @@
 */
 
 import {mapGetters,mapMutations} from 'vuex'
+import animations from 'create-keyframe-animation'
 
 export default {
   name: 'Player',
@@ -72,25 +76,89 @@ export default {
   methods:{
   	playerBack(){
   		this.setFullScreen(false)
+  		console.log(this.fullScreen)
   	},
   	open(){
   		this.setFullScreen(true)
   	},
+  	//计算x,y,scale的值，封装进方法里
+  	_getPosAndScale(){
+  		const targetWidth = 40;	//小图片宽度
+  		const paddingLeft = 40;	//小图片边距
+  		const paddingBottom = 30;	//小图片边距
+  		const paddingTop = 80;	//大图片边距
+  		const width = window.innerWidth*0.8;	//大图片宽度
+  		const scale = targetWidth/width;	//缩放比例
+  		const x = -(window.innerWidth/2 - paddingLeft);	//中心点x距离
+  		const y = window.innerHeight - paddingTop - width/2 -paddingBottom;	//中心点y距离
+  		return {x,y,scale}
+  	},
   	/*动画钩子,引用插件，以js写css的边界*/
   	enter(el,done){
-  		//done是回调函数，当done执行就会跳到下一个钩子
-
-
+  		//done是回调函数，当done执行，才会跳到下一个钩子after
+  		const {x,y,scale} = this._getPosAndScale()
+  		//使用插件，js语法写css的动画样式
+  		//定义动作对象变量
+  		let animation = {
+  			0:{
+  				transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+  			},
+  			60:{
+  				transform: `translate3d(0,0,0) scale(1.1)`
+  			},
+  			100:{
+  				transform: `translate3d(0,0,0) scale(1)`
+  			},
+  		}
+  		//定义插件的类
+  		animations.registerAnimation({
+  			name:'move',	//自定义类名
+  			animation,	//动作变量
+  			presets:{
+  				duration:400,
+  				easing:'linear'
+  			}
+  		})
+  		//执行类
+  		animations.runAnimation(this.$refs.cdWrapper,'move',done)
   	},
   	afterEnter(){
-
+  		animations.unregisterAnimation('move')
+  		this.$refs.cdWrapper.style.animation = ''
   	},
   	leave(el,done){
-
+  		//done是回调函数，当done执行，才会跳到下一个钩子after
+  		const {x,y,scale} = this._getPosAndScale()
+  		//使用插件，js语法写css的动画样式
+  		//定义动作对象变量
+  		let animationa = {
+  			0:{
+  				transform: `translate3d(0,0,0)`
+  			},
+  			60:{
+  				transform: `translate3d(${-x}px,${-y}px,0)`
+  			},
+  			100:{
+  				transform: `translate3d(${-x}px,${-y}px,0)`
+  			},
+  		}
+  		//定义插件的类
+  		animations.registerAnimation({
+  			name:'moveback',	//自定义类名
+  			animationa,	//动作变量
+  			presets:{
+  				duration:1000,
+  				easing:'linear'
+  			}
+  		})
+  		//执行类
+  		animations.runAnimation(this.$refs.cdWrapper,'moveback',done)
   	},
   	afterLeave(){
-
+  		animations.unregisterAnimation('moveback')
+  		this.$refs.cdWrapper.style.animation = ''
   	},
+  	/*存入点击事件触发的是否展示数据*/
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN'
   	})
@@ -267,14 +335,14 @@ export default {
 	}
 /*播放器动画样式*/
 	.normal-enter-active, .normal-leave-active{
-		transition: all 1s;
+		transition: all 0.4s;
 	}
 	.normal-enter,.normal-leave-to{
 		opacity: 0;
 	}
 /*内部个别样式变化*/
 	.player-normal_top, .player-normal_buttom{
-		transition: all 1s cubic-bezier(0.86,0.18,0.82,1.32);
+		transition: all 0.4s cubic-bezier(0.86,0.18,0.82,1.32);
 	}
 	/*内部个别样式变化--头部*/
 	.normal-enter .player-normal_top{
