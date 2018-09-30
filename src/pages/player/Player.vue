@@ -34,7 +34,7 @@
     	</div>
 	</div>
 	</transition>
-
+	<!--迷你播放器小部件-->
 	<transition name="mini">
 	<div class="player-mini" @click="open" v-show="!fullScreen">
     	<div class="player-mini_img" v-if="currentSong.image">
@@ -49,6 +49,8 @@
     	</div>
 	</div>
 	</transition>
+	<!--h5播放媒体便签-->
+	<audio ref="audio" :src="currentSong.url"></audio>
   </div>
 </template>
 
@@ -76,7 +78,6 @@ export default {
   methods:{
   	playerBack(){
   		this.setFullScreen(false)
-  		console.log(this.fullScreen)
   	},
   	open(){
   		this.setFullScreen(true)
@@ -127,10 +128,7 @@ export default {
   		this.$refs.cdWrapper.style.animation = ''
   	},
   	leave(el,done){
-  		//done是回调函数，当done执行，才会跳到下一个钩子after
   		const {x,y,scale} = this._getPosAndScale()
-  		//使用插件，js语法写css的动画样式
-  		//定义动作对象变量
   		let animationa = {
   			0:{
   				transform: `translate3d(0,0,0)`
@@ -142,7 +140,6 @@ export default {
   				transform: `translate3d(${-x}px,${-y}px,0)`
   			},
   		}
-  		//定义插件的类
   		animations.registerAnimation({
   			name:'moveback',	//自定义类名
   			animationa,	//动作变量
@@ -151,17 +148,28 @@ export default {
   				easing:'linear'
   			}
   		})
-  		//执行类
   		animations.runAnimation(this.$refs.cdWrapper,'moveback',done)
   	},
   	afterLeave(){
   		animations.unregisterAnimation('moveback')
   		this.$refs.cdWrapper.style.animation = ''
   	},
+  	//
   	/*存入点击事件触发的是否展示数据*/
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN'
   	})
+  },
+  //监听当前歌曲改变时播放音乐
+  watch:{
+
+  	currentSong(){
+  		this.$nextTick(()=>{
+  			console.log(this.currentSong.url)
+  			this.$refs.audio.play()
+  		})
+  		
+  	}
   }
 }
 </script>

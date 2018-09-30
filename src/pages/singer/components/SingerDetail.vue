@@ -13,7 +13,7 @@
 <script>
 import MusicList from '@/common/musiclist/MusicList'
 
-import {getSingerDetail} from '@/api/singer'  //引入api的后台数据
+import {getSingerDetail,getSongs} from '@/api/singer'  //引入api的后台数据
 import {ERR_OK} from '@/api/config' //引入自定义的公共变量
 import Loading from '@/common/loading/loading'
 import {mapGetters} from 'vuex'
@@ -58,16 +58,25 @@ export default {
           //console.log(this.songs)
         }
       })
+
     },
     //数据提取方法，引入类
     _normalizeSongs(list){
       let ret = []  //新建空数组，push进提取的数据
+      
       list.forEach((item)=>{
         let musicData = item.musicData  //let {musicData} = item  //初步提取数据
         if(musicData.songid && musicData.albummid){
-          ret.push(createSong(musicData)) //不需要一个一个new传值
+          //获取歌曲源url数据
+          let songUrl = ''
+          getSongs(musicData.songmid).then((res)=>{
+            songUrl = res.req_0.data.midurlinfo[0].purl   
+            ret.push(createSong(musicData,songUrl)) //不需要一个一个new传值        
+          })
+         
         }
       })
+      
       return ret
     }
   }

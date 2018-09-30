@@ -42,6 +42,7 @@ import Scroll from '@/common/scroll/Scroll'
 import Loading from '@/common/loading/loading'
 import {mapActions} from 'vuex'
 
+
   export default {
     components:{
       SongList,
