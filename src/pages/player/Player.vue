@@ -28,14 +28,18 @@
     	<div class="player-normal_buttom">
     		<div class="player-normal_progress-wrapper">
     			<span>{{format(currentTime)}}</span>
-    			<div class="player-normal_progress-bar"></div>
+    			<div class="player-normal_progress-bar">
+    				<progress-bar :percent="percent"></progress-bar>
+    			</div>
     			<span>{{format(currentSong.duration)}}</span>
     		</div>
-    		<span class="iconfont" >&#xe672;</span>
-    		<span class="iconfont" @click="prev">&#xe62c;</span>
-    		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
-    		<span class="iconfont" @click="next">&#xe62d;</span>
-    		<span class="iconfont">&#xe672;</span>
+    		<div class="player-normal_operators">
+    			<span class="iconfont" >&#xe672;</span>
+	    		<span class="iconfont" @click="prev">&#xe62c;</span>
+	    		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
+	    		<span class="iconfont" @click="next">&#xe62d;</span>
+	    		<span class="iconfont">&#xe672;</span>
+    		</div> 		
     	</div>
 	</div>
 	</transition>
@@ -73,6 +77,7 @@
 
 import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
+import ProgressBar from './components/ProgressBar'
 
 export default {
   name: 'Player',
@@ -82,6 +87,9 @@ export default {
   		currentTime:0
   	}
   },
+  components:{
+  	ProgressBar,
+  },
   computed:{
   	//图标计算属性
   	playIcon(){
@@ -90,6 +98,10 @@ export default {
   	//唱片动态样式计算属性
   	playCd(){
   		return this.playing ? 'player-normal_middle-cd--playing' : 'player-normal_middle-cd--playing player-normal_middle-cd--pause'
+  	},
+  	//进度条传入百分比给子组件
+  	percent(){
+  		return this.currentTime/this.currentSong.duration
   	},
   	...mapGetters([
   		'fullScreen',	//判断转开的是大页面还是小组件
@@ -377,13 +389,39 @@ export default {
 		position: absolute;
 		bottom: 60px;
 		width: 100%;
-		margin:0 50px;
 	}
-	.player-normal_buttom span{
+	.player-normal_operators{
+		display: flex;
+		align-items: center;
+		width: 80%;
+		margin: 0 auto;
+	}
+	.player-normal_operators span{
 		display: inline-block;
+		flex: 1;
 		font-size: 38px;
 		color: #31c27c;
-		margin-right: 5px;
+	}
+	.player-normal_progress-wrapper{
+		display: flex;
+		align-items: center;
+		width: 80%;
+		margin: 0 auto;
+		padding: 10px 0; 
+	}
+	.player-normal_progress-wrapper span{
+		flex: 0 0 30px;
+		display: inline-block;
+		font-size: 12px;
+		width: 30px;
+		line-height: 30px;
+		color: #fff;
+	}
+	.player-normal_progress-wrapper span:last-child{
+		text-align: right;
+	}
+	.player-normal_progress-bar{
+		flex: 1;
 	}
 /*小播放器部件*/
 	.player-mini{
