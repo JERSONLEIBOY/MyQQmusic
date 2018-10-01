@@ -26,10 +26,15 @@
     		</div>   		
     	</div>
     	<div class="player-normal_buttom">
-    		<span class="iconfont">&#xe672;</span>
-    		<span class="iconfont">&#xe62c;</span>
+    		<div class="player-normal_progress-wrapper">
+    			<span>{{format(currentTime)}}</span>
+    			<div class="player-normal_progress-bar"></div>
+    			<span>{{format(currentSong.duration)}}</span>
+    		</div>
+    		<span class="iconfont" >&#xe672;</span>
+    		<span class="iconfont" @click="prev">&#xe62c;</span>
     		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
-    		<span class="iconfont">&#xe62d;</span>
+    		<span class="iconfont" @click="next">&#xe62d;</span>
     		<span class="iconfont">&#xe672;</span>
     	</div>
 	</div>
@@ -51,7 +56,12 @@
 	</div>
 	</transition>
 	<!--h5播放媒体便签-->
-	<audio ref="audio" :src="currentSong.url"></audio>
+	<audio ref="audio" 
+		:src="currentSong.url" 
+		@canplay="ready" 
+		@error="error"
+		@timeupdate="updateTime"
+	></audio>
   </div>
 </template>
 
@@ -66,6 +76,12 @@ import animations from 'create-keyframe-animation'
 
 export default {
   name: 'Player',
+  data(){
+  	return {
+  		songReady:false,
+  		currentTime:0
+  	}
+  },
   computed:{
   	//图标计算属性
   	playIcon(){
@@ -80,6 +96,7 @@ export default {
   		'playlist',	//数据和判断整个组件是否展示
   		'currentSong',	//当前歌曲的数据渲染进页面
   		'playing',	//播放状态，布尔值
+  		'currentIndex',	//当前歌曲序列
   	])
   },
   methods:{
@@ -101,7 +118,7 @@ export default {
   		const y = window.innerHeight - paddingTop - width/2 -paddingBottom;	//中心点y距离
   		return {x,y,scale}
   	},
-  	/*动画钩子,引用插件，以js写css的边界*/
+/*******动画钩子,引用插件，以js写css的边界*******/
   	enter(el,done){
   		//done是回调函数，当done执行，才会跳到下一个钩子after
   		const {x,y,scale} = this._getPosAndScale()
@@ -161,14 +178,79 @@ export default {
   		animations.unregisterAnimation('moveback')
   		this.$refs.cdWrapper.style.animation = ''
   	},
-  	//控制播放
+/*****进度条数据*****/
+	updateTime(e){
+		//h5播放器内置获取播放中进度时间
+		this.currentTime = e.target.currentTime
+	},
+	//自定义方法，传入参数时间
+	format(interval){
+		interval = interval | 0 //把时间戳取整再获取分秒
+		const minute = interval/60 | 0	//整后的时间换单位计算
+		const second = this._pad(interval%60)	//取余
+		return `${minute}:${second}`
+	},
+	//计算的时间个位数时不会自动补0，格式化时间方法
+	_pad(num,n=2){
+		let long = num.toString().length
+		while(long<n){
+			num = '0'+num
+			long ++ 
+		}
+		return num
+	},
+/*****控制播放******/
   	togglePlaying(){
   		this.setPlayingState(!this.playing)
+  	},
+  	ready(){
+  		//h5播放器标签有哦属性，@canplay，当获取到资源的时候执行
+  		//这里设置变量，作为是否准备好才可以进行切换下一首
+  		this.songReady = true
+  	},
+  	error(){
+  		//当url资源获取不到时，因为设置了变量ready才能切换，那功能就奔溃了
+  		//因此，考虑这种情况，使变量依旧生效
+  		this.songReady = true
+  	},
+  	prev(){
+  		//判断播放器准备好才能操作
+  		if(!this.songReady){
+  			return 
+  		}
+  		let index = this.currentIndex-1
+  		if(index === -1){
+  			//当前一首减到最后一个，转为数组的最后一项序列
+  			index = this.playlist.length-1
+  		}
+  		this.setCurrentIndex(index)
+  		//暂停时切换下一首，按钮没有变化，再加
+  		if(!this.playing){
+  			this.togglePlaying()
+  		}
+  		this.songReady = false
+  	},
+  	next(){
+  		//判断播放器准备好才能操作
+  		if(!this.songReady){
+  			return 
+  		}
+  		let index = this.currentIndex+1
+  		if(index === this.playlist.length){
+  			//当前一首加到最后一个，转为数组的第一项序列
+  			index = 0
+  		}
+  		this.setCurrentIndex(index)
+  		if(!this.playing){
+  			this.togglePlaying()
+  		}
+  		this.songReady = false
   	},
   	/*存入点击事件触发的是否展示数据*/
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN',
-  		setPlayingState:'SET_PLAYING_STATE'
+  		setPlayingState:'SET_PLAYING_STATE',
+  		setCurrentIndex:'SET_CURRENT_INDEX'
   	})
   },
   //监听当前歌曲改变时播放音乐
