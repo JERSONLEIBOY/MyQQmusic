@@ -29,7 +29,7 @@
     		<div class="player-normal_progress-wrapper">
     			<span>{{format(currentTime)}}</span>
     			<div class="player-normal_progress-bar">
-    				<progress-bar :percent="percent"></progress-bar>
+    				<progress-bar :percent="percent" @percentChange="percentChange"></progress-bar>
     			</div>
     			<span>{{format(currentSong.duration)}}</span>
     		</div>
@@ -258,6 +258,15 @@ export default {
   		}
   		this.songReady = false
   	},
+  	//进度条拖拽改变audio的当前时间
+  	percentChange(percent){
+  		this.$refs.audio.currentTime = this.currentSong.duration*percent
+  		//当歌曲是暂停的时候，把播放状态改为播放
+  		if(!this.playing){
+  			this.togglePlaying()
+  		}
+  	},
+
   	/*存入点击事件触发的是否展示数据*/
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN',
