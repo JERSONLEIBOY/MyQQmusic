@@ -2,9 +2,9 @@
   <div class="musiclist">
     <router-link tag="div" to="/singer" class="musiclist-back"><</router-link>
     <h1>{{title}}</h1> 
-    <div class="musiclist-bgimg" :style="singerimg" ref="bgimg">         
+    <div class="musiclist-bgimg" :style="singerimg" ref="bgimg" @click="random">         
       <div class="musiclist-play-wrapper">
-        <div class="musiclist-play">
+        <div class="musiclist-play" >
           <span>♥</span>
           <p>随机播放全部</p>
         </div>
@@ -79,8 +79,13 @@ import {mapActions} from 'vuex'
         //把这些数据存入vuex中的mutations（一个动作使用多个mutation，使用actions）
         this.selectPlay({list:this.songs,index:index})
       },
+      //设置播放参数action
+      random(){
+        this.randomPlay({list:this.songs})
+      },
       ...mapActions([
-          'selectPlay'
+          'selectPlay',
+          'randomPlay'
       ])
     },
     watch:{

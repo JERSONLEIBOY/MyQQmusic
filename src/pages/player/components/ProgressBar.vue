@@ -80,8 +80,11 @@ const progressBtnWidth = 16
       },
       //点击改变进度，用上一个封装的方法，传入宽度改变进度天，进度条改变百分比
       _progressClick(e){
-        //点击时间don的内置方法
-        this._offset(e.offsetX) //点击在当前dom的坐标
+        //点击事件dom的内置方法
+        //this._offset(e.offsetX) //点击在当前dom的坐标
+        const rect = this.$refs.progressBar.getBoundingClientRect() //整个进度条的dom
+        const offsetWidth = e.pageX - rect.left //点击在页面的坐标-dom的左
+        this._offset(offsetWidth)
         this._triggerPercent()
       },
     }

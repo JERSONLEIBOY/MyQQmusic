@@ -34,11 +34,11 @@
     			<span>{{format(currentSong.duration)}}</span>
     		</div>
     		<div class="player-normal_operators">
-    			<span class="iconfont" >&#xe672;</span>
+    			<span class="iconfont" :class="iconMode" @click="changeMode"></span>
 	    		<span class="iconfont" @click="prev">&#xe62c;</span>
 	    		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
 	    		<span class="iconfont" @click="next">&#xe62d;</span>
-	    		<span class="iconfont">&#xe672;</span>
+	    		<span class="iconfont" :class="iconMode" @click="changeMode"></span>
     		</div> 		
     	</div>
 	</div>
@@ -61,7 +61,7 @@
     				@click.stop="togglePlaying"
     			></span>
     		</progress-circle>
-    		<div class="iconfont">&#xe672;</div>
+    		<div class="iconfont" :class="iconMode" @click.stop="changeMode"></div>
     	</div>
 	</div>
 	</transition>
@@ -71,6 +71,7 @@
 		@canplay="ready" 
 		@error="error"
 		@timeupdate="updateTime"
+		@ended="end"
 	></audio>
   </div>
 </template>
@@ -85,6 +86,8 @@ import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProgressBar from './components/ProgressBar'
 import ProgressCircle from './components/ProgressCircle'
+import {playMode} from '@/common/js/config'	//引入状态码
+import {shuffle} from '@/common/js/util'	//引入状态码
 
 export default {
   name: 'Player',
@@ -108,16 +111,22 @@ export default {
   	playCd(){
   		return this.playing ? 'player-normal_middle-cd--playing' : 'player-normal_middle-cd--playing player-normal_middle-cd--pause'
   	},
+  	//播放模式动态样式，计算属性
+  	iconMode(){
+  		return this.mode===playMode.sequence? 'icon-xunhuanbofang' : this.mode===playMode.loop?'icon-danquxunhuan':'icon-suijibofang'
+  	},
   	//进度条传入百分比给子组件
   	percent(){
   		return this.currentTime/this.currentSong.duration
   	},
   	...mapGetters([
   		'fullScreen',	//判断转开的是大页面还是小组件
-  		'playlist',	//数据和判断整个组件是否展示
+  		'playlist',	//歌曲列表，数据和判断整个组件是否展示
   		'currentSong',	//当前歌曲的数据渲染进页面
   		'playing',	//播放状态，布尔值
   		'currentIndex',	//当前歌曲序列
+  		'mode',	//当前播放模式
+  		'sequenceList'	//播放列表
   	])
   },
   methods:{
@@ -267,6 +276,43 @@ export default {
   		}
   		this.songReady = false
   	},
+  	//控制播放模式
+  	changeMode(){
+  		//控制播放模式
+  		//mode是0，1，2，点击循环改变
+  		const mode = (this.mode+1)%3	//0点击得1，1点击得2，2点击得0
+  		this.setPlayMode(mode)
+  		//控制播放列表
+  		let list = null	//设置数组
+  		if(mode === playMode.random){
+  			list = shuffle(this.sequenceList)
+  		}else{
+  			list = this.sequenceList	//只设置2种情况，单曲用setTime就好
+  		}
+  		//切换模式把当前歌曲换了，导致bug，设置方法一首歌为当前歌曲覆盖
+  		this._resetCurrentSong(list)
+  		this.setPlaylist(list)
+  	},
+  	_resetCurrentSong(list){
+  		//找到当前歌曲在数组中的index
+  		let index = list.findIndex((item)=>{
+  			return item.id === this.currentSong.id
+  		})
+  		//设置当前序列
+  		this.setCurrentIndex(index)
+  	},
+  	//播完当前歌曲，自动识别播放模式切歌
+  	end(){
+  		if(this.mode === playMode.loop){
+  			this._loop()	//单曲，通过修改当前播放时间为0
+  		}else{
+  			this.next()
+  		}		
+  	},
+  	_loop(){
+  		this.$refs.audio.currentTime = 0
+  		this.$refs.audio.play()
+  	},
   	//进度条拖拽改变audio的当前时间
   	percentChange(percent){
   		this.$refs.audio.currentTime = this.currentSong.duration*percent
@@ -280,13 +326,18 @@ export default {
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN',
   		setPlayingState:'SET_PLAYING_STATE',
-  		setCurrentIndex:'SET_CURRENT_INDEX'
+  		setCurrentIndex:'SET_CURRENT_INDEX',
+  		setPlayMode:'SET_PLAY_MODE',
+  		setPlaylist:'SET_PLAYLIST'
   	})
   },
   //监听当前歌曲改变时播放音乐
   watch:{
 
-  	currentSong(){
+  	currentSong(newSong,oldSong){
+  		if(newSong.id===oldSong.id){
+  			return 
+  		}
   		this.$nextTick(()=>{
   			//console.log(this.currentSong.url)
   			this.$refs.audio.play()
@@ -482,7 +533,6 @@ export default {
 	.player-mini_control{
 		flex: 0 0 80px;
 		width: 80px;
-		height: 100%;
 		text-align: center;
 	}
 	

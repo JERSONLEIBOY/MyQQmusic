@@ -11,7 +11,7 @@ const state = {
 	playing:false,	//播放状态
 	fullScreen:false,	//展开状态
 	playlist:[],	//播放列表
-	sequenceLise:[],	//歌曲列表
+	sequenceList:[],	//歌曲列表
 	mode:playMode.sequence,	//播放模式
 	currentIndex:-1,	//当前歌曲序列
 
