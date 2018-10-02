@@ -87,7 +87,8 @@ import animations from 'create-keyframe-animation'
 import ProgressBar from './components/ProgressBar'
 import ProgressCircle from './components/ProgressCircle'
 import {playMode} from '@/common/js/config'	//引入状态码
-import {shuffle} from '@/common/js/util'	//引入状态码
+import {shuffle} from '@/common/js/util'
+import Lyric from 'lyric-parser'	
 
 export default {
   name: 'Player',
@@ -95,7 +96,8 @@ export default {
   	return {
   		songReady:false,
   		currentTime:0,
-  		radius:32
+  		radius:32,
+  		currentLyric:null
   	}
   },
   components:{
@@ -301,6 +303,13 @@ export default {
   		//设置当前序列
   		this.setCurrentIndex(index)
   	},
+  	//获取歌词
+  	_getLyric(){
+  		this.currentSong.getLyric().then((lyric)=>{
+  			this.currentLyric = new Lyric(lyric)
+  			console.log(this.currentLyric)
+  		})
+  	},
   	//播完当前歌曲，自动识别播放模式切歌
   	end(){
   		if(this.mode === playMode.loop){
@@ -341,6 +350,7 @@ export default {
   		this.$nextTick(()=>{
   			//console.log(this.currentSong.url)
   			this.$refs.audio.play()
+  			this._getLyric()
   		})		
   	},
   	playing(item){

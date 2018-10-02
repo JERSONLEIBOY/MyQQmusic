@@ -9,7 +9,4 @@ export const commonParams = {
 export const object = {
 	param : 'jsonpCallback'
 }
-export const test = {
-	param : 'getUCGI7480443789950053'
-}
 export const ERR_OK = 0

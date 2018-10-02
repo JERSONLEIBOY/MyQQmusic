@@ -4,6 +4,12 @@
  *调用实例对象（传入参数）
 */
 
+//引入获取歌词
+import {getLyric} from '@/api/singer'
+import {ERR_OK} from '@/api/config'
+import {Base64} from 'js-base64'
+
+
 //创建实例对象
 export default class Song{
 	constructor({id,mid,singer,name,album,duration,image,url}){
@@ -16,6 +22,27 @@ export default class Song{
 		this.image = image
 		this.url = url
 	}
+	//获取数据
+	//封装成new的类方法，不直接获取
+	//执行api的js方法 
+	getLyric(){
+		if(this.lyric){
+			return Promise.resolve(this.lyric)
+		}
+		return new Promise((resolve,reject)=>{
+			getLyric(this.mid).then((res)=>{
+	  			if(res.code === ERR_OK){
+	  				//console.log(Base64.decode(res.lyric))
+	  				this.lyric = Base64.decode(res.lyric)
+	  				resolve(this.lyric)
+	  			}else{
+	  				reject('no lyric')
+	  			}
+  			})
+		})
+		
+	}		
+  	
 }
 
 //调用实例对象

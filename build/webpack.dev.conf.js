@@ -53,6 +53,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     },
     // 通过express导入路
       before(app) {
+      //歌单数据
       app.get('/api/getDiscList', (req, res) => {
         var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url, {
@@ -67,6 +68,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       }),
+      //歌手数据json
       app.get('/api/getSingers', (req, res) => {
         var url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
         axios.get(url, {
@@ -92,6 +94,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           params: req.query // 通过req从浏览器端发过来的一堆参数(platform，sin，ein等)透传给qq的服务端
         }).then((response)=>{ // qq服务端的响应数据，再通过res将响应数据输出到浏览器端
           res.json(response.data)
+        }).catch((error)=>{
+          console.log(error)
+        })
+      })
+      //歌词源
+      app.get('/api/getLyric', (req, res) => {
+        var url = 'https://shc.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/portal/player.html',
+            host: 'shc.y.qq.com'
+          },
+          params: req.query // 通过req从浏览器端发过来的一堆参数(platform，sin，ein等)透传给qq的服务端
+        }).then((response)=>{ // qq服务端的响应数据，再通过res将响应数据输出到浏览器端
+          //res.json(response.data) //不是json数据
+          var ret = response.data
+          if(typeof ret === 'string'){
+            var reg = /^\w+\(({[^()]+})\)$/ //正则截取字符串
+            var matches = ret.match(reg)  //截成数组
+            if(matches){
+              ret = JSON.parse(matches[1])  //取后半段，格式化成json
+            }
+          }
+          res.json(ret)
         }).catch((error)=>{
           console.log(error)
         })
