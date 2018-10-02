@@ -54,8 +54,14 @@
     		<p>{{currentSong.singer}}</p>
     	</div>
     	<div class="player-mini_control">
-    		<span class="iconfont" :class="playIcon" @click.stop="togglePlaying"></span>
-    		<span class="iconfont">&#xe672;</span>
+    		<progress-circle :radius="radius" :percent="percent">
+    			<span 
+    				class="iconfont iconposition" 
+    				:class="playIcon" 
+    				@click.stop="togglePlaying"
+    			></span>
+    		</progress-circle>
+    		<div class="iconfont">&#xe672;</div>
     	</div>
 	</div>
 	</transition>
@@ -78,17 +84,20 @@
 import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProgressBar from './components/ProgressBar'
+import ProgressCircle from './components/ProgressCircle'
 
 export default {
   name: 'Player',
   data(){
   	return {
   		songReady:false,
-  		currentTime:0
+  		currentTime:0,
+  		radius:32
   	}
   },
   components:{
   	ProgressBar,
+  	ProgressCircle
   },
   computed:{
   	//图标计算属性
@@ -475,13 +484,22 @@ export default {
 		width: 80px;
 		height: 100%;
 		text-align: center;
-		padding: 25px 10px 0 0;
 	}
-	.player-mini_control span{
+	
+	.iconposition{
+		flex: 1;
 		display: inline-block;
-		margin-right: 5px;
 		font-size: 32px;
-		line-height: 100%;
+		margin-right: 5px;
+		color: #31c27c;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	.player-mini_control div{
+		flex: 1;
+		display: inline-block;
+		font-size: 32px;
 		color: #31c27c;
 	}
 /*播放器动画样式*/
