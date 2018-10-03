@@ -59,6 +59,12 @@ export default {
       //console.log('轮播图加载完成，执行刷新scroll')
       this.scroll && this.scroll.refresh()
     },
+    scrollTo() {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+    },
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+    }
 
   },
   //监听数据渲染进来

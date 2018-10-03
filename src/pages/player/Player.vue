@@ -23,8 +23,25 @@
     					<img :src="currentSong.image">
     				</div>
     			</div>
-    		</div>   		
+    		</div>   
+    		<!--歌词部分-->
+	    	<scroll class="player-normal_middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+	    		<div class="player-normal_lyric--wrapper">
+	    			<div v-if="currentLyric">
+	    				<p 
+                class="player-normal_lyric--p" 
+                :class="{'player-normal_lyric--current':currentLineNum===index}"
+                ref="lyricLine" 
+                v-for="(item,index) of currentLyric.lines"
+              >
+	    					{{item.txt}}
+	    				</p>
+	    			</div>
+	    		</div>
+	    	</scroll>		
     	</div>
+    	
+    	<!--播放部件部分-->
     	<div class="player-normal_buttom">
     		<div class="player-normal_progress-wrapper">
     			<span>{{format(currentTime)}}</span>
@@ -89,6 +106,7 @@ import ProgressCircle from './components/ProgressCircle'
 import {playMode} from '@/common/js/config'	//引入状态码
 import {shuffle} from '@/common/js/util'
 import Lyric from 'lyric-parser'	
+import Scroll from '@/common/scroll/Scroll'
 
 export default {
   name: 'Player',
@@ -97,12 +115,14 @@ export default {
   		songReady:false,
   		currentTime:0,
   		radius:32,
-  		currentLyric:null
+  		currentLyric:null,
+      currentLineNum:0
   	}
   },
   components:{
   	ProgressBar,
-  	ProgressCircle
+  	ProgressCircle,
+    Scroll
   },
   computed:{
   	//图标计算属性
@@ -303,13 +323,25 @@ export default {
   		//设置当前序列
   		this.setCurrentIndex(index)
   	},
-  	//获取歌词
+/*****获取歌词*******/
   	_getLyric(){
   		this.currentSong.getLyric().then((lyric)=>{
-  			this.currentLyric = new Lyric(lyric)
-  			console.log(this.currentLyric)
+  			this.currentLyric = new Lyric(lyric,this._handleLyric)
+  			//console.log(this.currentLyric)
+        if(this.playing){ //如歌歌曲正在播放，执行高亮
+          this.currentLyric.play()    //这是什么属性？？
+        }
   		})
   	},
+    _handleLyric({lineNum,txt}){  //把当前播放到的歌词num和文字提取出来
+      this.currentLineNum = lineNum
+      if(lineNum>5){
+        let lineEl = this.$refs.lyricLine[lineNum-5]
+        this.$refs.lyricList.scrollToElement(lineEl,1000)
+      }else{
+        this.$refs.lyricList.scrollToElement(0,0,1000)
+      }
+    },
   	//播完当前歌曲，自动识别播放模式切歌
   	end(){
   		if(this.mode === playMode.loop){
@@ -463,6 +495,30 @@ export default {
 		height: 100%;
 		border-radius: 50%;
 	}
+/*歌词部分样式*/
+	.player-normal_middle-r{
+		display: inline-block;
+		vertical-align: top;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	.player-normal_lyric--wrapper{
+		width: 80%;
+		margin: 0 auto;
+		overflow: hidden;
+		text-align: center;
+	}
+	.player-normal_lyric--p{
+		line-height: 32px;
+		font-size: 12px;
+		color: rgba(255,255,255,0.6);		
+	}
+  .player-normal_lyric--current{
+    color: rgb(255,255,255);  /*不生效是因为用p直接选择器的优先权大，无法动态覆盖*/
+    line-height: 40px;
+    font-weight: 700;
+  }  
 /*播放器页面-按钮样式*/
 	.player-normal_buttom{
 		position: absolute;
