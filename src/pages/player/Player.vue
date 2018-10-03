@@ -28,6 +28,10 @@
     					<img :src="currentSong.image">
     				</div>
     			</div>
+          <!--单句歌词部分-->
+          <div class="player-normal_middle-playing--lyric">
+            <p>{{playingLyric}}</p>
+          </div>
     		</div>   
     		<!--歌词部分-->
 	    	<scroll class="player-normal_middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
@@ -127,7 +131,8 @@ export default {
   		currentLyric:null,
       currentLineNum:0,
       currentShow:'cd',
-      touch:{}
+      touch:{},
+      playingLyric:''
   	}
   },
   components:{
@@ -265,6 +270,11 @@ export default {
 /*****控制播放******/
   	togglePlaying(){
   		this.setPlayingState(!this.playing)
+      //优化bug，暂停播放时，歌词不停
+      if(this.currentLyric){
+        //清除歌词
+        this.currentLyric.togglePlay()
+      }
   	},
   	ready(){
   		//h5播放器标签有哦属性，@canplay，当获取到资源的时候执行
@@ -281,16 +291,21 @@ export default {
   		if(!this.songReady){
   			return 
   		}
-  		let index = this.currentIndex-1
-  		if(index === -1){
-  			//当前一首减到最后一个，转为数组的最后一项序列
-  			index = this.playlist.length-1
-  		}
-  		this.setCurrentIndex(index)
-  		//暂停时切换下一首，按钮没有变化，再加
-  		if(!this.playing){
-  			this.togglePlaying()
-  		}
+      //当歌曲列表只有一首歌时，index不存在后面卡住
+      if(this.playlist.length === 1 || this.mode===playMode.loop){
+        this._loop()
+      }else{
+    		let index = this.currentIndex-1
+    		if(index === -1){
+    			//当前一首减到最后一个，转为数组的最后一项序列
+    			index = this.playlist.length-1
+    		}
+    		this.setCurrentIndex(index)
+    		//暂停时切换下一首，按钮没有变化，再加
+    		if(!this.playing){
+    			this.togglePlaying()
+    		}
+      }
   		this.songReady = false
   	},
   	next(){
@@ -298,16 +313,21 @@ export default {
   		if(!this.songReady){
   			return 
   		}
-  		let index = this.currentIndex+1
-  		if(index === this.playlist.length){
-  			//当前一首加到最后一个，转为数组的第一项序列
-  			index = 0
-  		}
-  		this.setCurrentIndex(index)
-  		if(!this.playing){
-  			this.togglePlaying()
-  		}
-  		this.songReady = false
+      //当歌曲列表只有一首歌时，index不存在后面卡住
+      if(this.playlist.length === 1 || this.mode===playMode.loop){
+        this._loop()
+      }else{
+        let index = this.currentIndex+1
+        if(index === this.playlist.length){
+          //当前一首加到最后一个，转为数组的第一项序列
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        if(!this.playing){
+          this.togglePlaying()
+        }
+      } 	
+      this.songReady = false	
   	},
   	//控制播放模式
   	changeMode(){
@@ -342,10 +362,15 @@ export default {
         if(this.playing){ //如歌歌曲正在播放，执行高亮
           this.currentLyric.play()    //这是什么属性？？
         }
-  		})
+  		}).catch(()=>{
+        this.currentLyric = null
+        this.playingLyric = ''
+        this.currentLineNum = 0
+      })
   	},
     _handleLyric({lineNum,txt}){  //把当前播放到的歌词num和文字提取出来
       this.currentLineNum = lineNum
+      this.playingLyric = txt
       if(lineNum>5){
         let lineEl = this.$refs.lyricLine[lineNum-5]
         this.$refs.lyricList.scrollToElement(lineEl,1000)
@@ -372,17 +397,17 @@ export default {
       if(Math.abs(deltaY)>Math.abs(deltaX)){
         //当y滑动大于x滑动，证明是在滑动歌词，因此取消当前左右touch
         return 
-      }
-      //分情况，用小圆点来判断歌词页面dom的left
-      const left = this.currentShow==='cd'?0: -window.innerWidth
-      //随手指拖拽改变的width，通用
-      const width = Math.min(0,Math.max(-window.innerWidth,left+deltaX))   
-      //使用transform定义偏移
-      this.touch.percent = Math.abs(width/window.innerWidth)  //拖拽距离占屏幕百分比
-      this.$refs.lyricList.$el.style.transform=`translate3d(${width}px,0,0)`
-      this.$refs.lyricList.$el.style.transition=`all 0` //动画偏移过渡
-      this.$refs.middleLeft.style.opacity=1-this.touch.percent  //唱片透明度消失
-
+      }else{
+        //分情况，用小圆点来判断歌词页面dom的left
+        const left = this.currentShow==='cd'?0: -window.innerWidth
+        //随手指拖拽改变的width，通用
+        const width = Math.min(0,Math.max(-window.innerWidth,left+deltaX))   
+        //使用transform定义偏移
+        this.touch.percent = Math.abs(width/window.innerWidth)  //拖拽距离占屏幕百分比
+        this.$refs.lyricList.$el.style.transform=`translate3d(${width}px,0,0)`
+        this.$refs.lyricList.$el.style.transition=`all 0` //动画偏移过渡
+        this.$refs.middleLeft.style.opacity=1-this.touch.percent  //唱片透明度消失
+      }     
     },
     middleTouchEnd(e){
       //判断两种情况，最终停留left
@@ -426,6 +451,11 @@ export default {
   	_loop(){
   		this.$refs.audio.currentTime = 0
   		this.$refs.audio.play()
+      //优化bug，单曲循坏时，歌词没有回到顶
+      if(this.currentLyric){
+        //清除歌词
+        this.currentLyric.seek(0)
+      }
   	},
   	//进度条拖拽改变audio的当前时间
   	percentChange(percent){
@@ -434,6 +464,11 @@ export default {
   		if(!this.playing){
   			this.togglePlaying()
   		}
+      //优化bug，进度条关联歌词
+      if(this.currentLyric){
+        //清除歌词
+        this.currentLyric.seek(this.currentSong.duration*percent*1000)
+      }
   	},
 
   	/*存入点击事件触发的是否展示数据*/
@@ -452,11 +487,17 @@ export default {
   		if(newSong.id===oldSong.id){
   			return 
   		}
-  		this.$nextTick(()=>{
+      //优化bug，切歌时，歌词不对应跳
+      if(this.currentLyric){
+        //清除歌词
+        //console.log(this.currentLyric.stop())
+        this.currentLyric.stop()  //没有执行  
+      }
+  		setTimeout(()=>{
   			//console.log(this.currentSong.url)
   			this.$refs.audio.play()
   			this._getLyric()
-  		})		
+  		},1000)		
   	},
   	playing(item){
   		this.$nextTick(()=>{
@@ -568,6 +609,19 @@ export default {
 		height: 100%;
 		border-radius: 50%;
 	}
+  .player-normal_middle-playing--lyric{
+    width: 80%;
+    margin: 30px auto 0 auto;
+    overflow: hidden;
+    text-align: center;
+  }
+  .player-normal_middle-playing--lyric p{
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+  }
 /*歌词部分样式*/
 	.player-normal_middle-r{
 		display: inline-block;
