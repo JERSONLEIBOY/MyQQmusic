@@ -16,8 +16,13 @@
     		<h1>{{currentSong.name}}</h1>
     		<h2>{{currentSong.singer}}</h2>
     	</div>
-    	<div class="player-normal_middle">
-    		<div class="player-normal_middle-l">
+    	<div 
+        class="player-normal_middle"
+        @touchstart.prevent="middleTouchStart"
+        @touchmove.prevent="middleTouchMove"
+        @touchend.prevent="middleTouchEnd"
+      >
+    		<div class="player-normal_middle-l" ref="middleLeft">
     			<div class="player-normal_middle-cdwrapper" ref="cdWrapper">
     				<div class="player-normal_middle-cd" :class="playCd">
     					<img :src="currentSong.image">
@@ -43,6 +48,10 @@
     	
     	<!--播放部件部分-->
     	<div class="player-normal_buttom">
+        <div class="player-normal_dot--wrapper">
+            <span class="dot" :class="{'dot-active':currentShow==='cd'}"></span>
+            <span class="dot" :class="{'dot-active':currentShow==='lyric'}"></span>
+        </div>
     		<div class="player-normal_progress-wrapper">
     			<span>{{format(currentTime)}}</span>
     			<div class="player-normal_progress-bar">
@@ -116,7 +125,9 @@ export default {
   		currentTime:0,
   		radius:32,
   		currentLyric:null,
-      currentLineNum:0
+      currentLineNum:0,
+      currentShow:'cd',
+      touch:{}
   	}
   },
   components:{
@@ -342,6 +353,68 @@ export default {
         this.$refs.lyricList.scrollToElement(0,0,1000)
       }
     },
+/*****左右滑动touch生命周期**********/
+    middleTouchStart(e){
+      this.touch.initiated = true //标志符
+      //获取拖拽距离，用于判断
+      const touch = e.touches[0]  //开始点到的数组【0】
+      this.touch.startX = touch.pageX
+      this.touch.startY = touch.pageY
+    },
+    middleTouchMove(e){
+      if(!this.touch.initiated){
+        return 
+      }
+      const touch = e.touches[0]
+      const deltaX = touch.pageX-this.touch.startX  //计算到的x拖拽距离
+      const deltaY = touch.pageY-this.touch.startY  //计算到的y拖拽距离
+      //歌词页面有个scroll，因此获取到y,来取消当前touch
+      if(Math.abs(deltaY)>Math.abs(deltaX)){
+        //当y滑动大于x滑动，证明是在滑动歌词，因此取消当前左右touch
+        return 
+      }
+      //分情况，用小圆点来判断歌词页面dom的left
+      const left = this.currentShow==='cd'?0: -window.innerWidth
+      //随手指拖拽改变的width，通用
+      const width = Math.min(0,Math.max(-window.innerWidth,left+deltaX))   
+      //使用transform定义偏移
+      this.touch.percent = Math.abs(width/window.innerWidth)  //拖拽距离占屏幕百分比
+      this.$refs.lyricList.$el.style.transform=`translate3d(${width}px,0,0)`
+      this.$refs.lyricList.$el.style.transition=`all 0` //动画偏移过渡
+      this.$refs.middleLeft.style.opacity=1-this.touch.percent  //唱片透明度消失
+
+    },
+    middleTouchEnd(e){
+      //判断两种情况，最终停留left
+      let width   //最终定位dom的偏移量
+      let opacity  //最终定位到dom的唱片透明度
+      if(this.currentShow==='cd'){
+        //判断拖拽距离占屏幕百分比，定住最终位置
+        if(this.touch.percent>0.1){
+          width = -window.innerWidth  //当滑动大于10%时，定位到歌词显示
+          opacity = 0
+          this.currentShow = 'lyric'
+        }else{
+          width = 0
+          opacity = 1
+        }
+      }else{
+        //在歌词页面往左滑动
+        if(this.touch.percent<0.9){
+          //百分比的计算不是单纯的拖拽距离，所以不是都为0.1
+          width = 0
+          opacity = 1
+          this.currentShow = 'cd'
+        }else{
+          opacity = 0
+          width = -window.innerWidth
+        }
+      }
+      this.$refs.lyricList.$el.style.transform=`translate3d(${width}px,0,0)`
+      this.$refs.lyricList.$el.style.transition=`all 0.4s`
+      this.$refs.middleLeft.style.opacity=opacity  //唱片透明度消失
+      this.$refs.middleLeft.style.transition='all 0.4s'  //唱片透明度消失
+    },
   	//播完当前歌曲，自动识别播放模式切歌
   	end(){
   		if(this.mode === playMode.loop){
@@ -525,6 +598,24 @@ export default {
 		bottom: 60px;
 		width: 100%;
 	}
+  .player-normal_dot--wrapper{
+    text-align: center;
+    font-size: 0;
+  }
+  .dot{
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.6);
+  }
+  .dot-active{
+    width: 20px;
+    border-radius: 5px;
+    background-color: rgb(255,255,255);
+  }
 	.player-normal_operators{
 		display: flex;
 		align-items: center;
