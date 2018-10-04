@@ -132,7 +132,7 @@ export default {
       currentLineNum:0,
       currentShow:'cd',
       touch:{},
-      playingLyric:''
+      playingLyric:'歌词加载中...'
   	}
   },
   components:{
@@ -323,6 +323,9 @@ export default {
           index = 0
         }
         this.setCurrentIndex(index)
+        if(this.currentLyric){
+          this.currentLyric.stop()  //没有执行 
+        }
         if(!this.playing){
           this.togglePlaying()
         }
@@ -508,7 +511,7 @@ export default {
       if(this.currentLyric){
         //清除歌词
         //console.log(this.currentLyric.stop())
-        this.currentLyric.stop()  //没有执行  
+        this.currentLyric.stop()  //没有执行//设置成null无法清除掉定时器  
         this.currentTime = 0
         this.playingLyric = ''
         this.currentLineNum = 0
