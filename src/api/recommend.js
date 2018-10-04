@@ -27,7 +27,7 @@ export function getRecommend(){
 		g_tk:5381,
 	})
 	//执行jsonp模块
-	console.log(jsonp(urlfront,thehash,object))
+	//console.log(jsonp(urlfront,thehash,object))
 	return jsonp(urlfront,thehash,object)
 }
 
@@ -37,7 +37,7 @@ export function getDiscList(){
 	//通过自身模拟服务器访问有host权限的数据
 	//先传入url和host获取服务器作为url，再传入hash完整获取
 	const urlfront = '/api/getDiscList'
-	console.log(urlfront)
+	//console.log(urlfront)
 
 	//把hash做成对象,es6创建对象并赋值,
 	//hash获取不了，要手动输入所有，把对象分2类，固定和不固定
@@ -59,7 +59,7 @@ export function getDiscList(){
 	return axios.get(urlfront,{
 		params:thehash
 	}).then((res)=>{
-		console.log(res.data)
+		//console.log(res.data)
 		return Promise.resolve(res.data)
 	})
 }

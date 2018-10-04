@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-show="playlist.length>0">
+  <div class="player" v-if="playlist.length>0">
   	<transition 
   		name="normal"
   		@enter="enter"
@@ -357,7 +357,10 @@ export default {
 /*****获取歌词*******/
   	_getLyric(){
   		this.currentSong.getLyric().then((lyric)=>{
-  			this.currentLyric = new Lyric(lyric,this._handleLyric)
+  			if (this.currentSong.lyric !== lyric) {
+            return
+          }
+        this.currentLyric = new Lyric(lyric,this._handleLyric)
   			//console.log(this.currentLyric)
         if(this.playing){ //如歌歌曲正在播放，执行高亮
           this.currentLyric.play()    //这是什么属性？？
@@ -373,14 +376,16 @@ export default {
       this.playingLyric = txt
       if(lineNum>5){
         let lineEl = this.$refs.lyricLine[lineNum-5]
-        this.$refs.lyricList.scrollToElement(lineEl,1000)
+        this.$refs.lyricList.scrollToElement(lineEl,1000)  
       }else{
-        this.$refs.lyricList.scrollToElement(0,0,1000)
+        this.$refs.lyricList.scrollToElement(0,0,1000)       
       }
     },
 /*****左右滑动touch生命周期**********/
     middleTouchStart(e){
       this.touch.initiated = true //标志符
+      // 用来判断是否是一次移动
+      this.touch.moved = false
       //获取拖拽距离，用于判断
       const touch = e.touches[0]  //开始点到的数组【0】
       this.touch.startX = touch.pageX
@@ -397,22 +402,28 @@ export default {
       if(Math.abs(deltaY)>Math.abs(deltaX)){
         //当y滑动大于x滑动，证明是在滑动歌词，因此取消当前左右touch
         return 
-      }else{
-        //分情况，用小圆点来判断歌词页面dom的left
-        const left = this.currentShow==='cd'?0: -window.innerWidth
-        //随手指拖拽改变的width，通用
-        const width = Math.min(0,Math.max(-window.innerWidth,left+deltaX))   
-        //使用transform定义偏移
-        this.touch.percent = Math.abs(width/window.innerWidth)  //拖拽距离占屏幕百分比
-        this.$refs.lyricList.$el.style.transform=`translate3d(${width}px,0,0)`
-        this.$refs.lyricList.$el.style.transition=`all 0` //动画偏移过渡
-        this.$refs.middleLeft.style.opacity=1-this.touch.percent  //唱片透明度消失
-      }     
+      }
+      if (!this.touch.moved) {
+          this.touch.moved = true
+      }
+      //分情况，用小圆点来判断歌词页面dom的left
+      const left = this.currentShow==='cd'?0: -window.innerWidth
+      //随手指拖拽改变的width，通用
+      const width = Math.min(0,Math.max(-window.innerWidth,left+deltaX))   
+      //使用transform定义偏移
+      this.touch.percent = Math.abs(width/window.innerWidth)  //拖拽距离占屏幕百分比
+      this.$refs.lyricList.$el.style.transform=`translate3d(${width}px,0,0)`
+      this.$refs.lyricList.$el.style.transition=`all 0` //动画偏移过渡
+      this.$refs.middleLeft.style.opacity=1-this.touch.percent  //唱片透明度消失         
     },
     middleTouchEnd(e){
+      if(!this.touch.moved){
+        return
+      }
       //判断两种情况，最终停留left
       let width   //最终定位dom的偏移量
       let opacity  //最终定位到dom的唱片透明度
+
       if(this.currentShow==='cd'){
         //判断拖拽距离占屏幕百分比，定住最终位置
         if(this.touch.percent>0.1){
@@ -484,14 +495,23 @@ export default {
   watch:{
 
   	currentSong(newSong,oldSong){
-  		if(newSong.id===oldSong.id){
+      if (!newSong.id) {
+        console.log('旧的'+oldSong)
+          return
+        }
+        
+  		/*if(newSong.id===oldSong.id){
+        console.log(newSong.id===oldSong.id)
   			return 
-  		}
+  		}*/
       //优化bug，切歌时，歌词不对应跳
       if(this.currentLyric){
         //清除歌词
         //console.log(this.currentLyric.stop())
         this.currentLyric.stop()  //没有执行  
+        this.currentTime = 0
+        this.playingLyric = ''
+        this.currentLineNum = 0
       }
   		setTimeout(()=>{
   			//console.log(this.currentSong.url)

@@ -1,5 +1,5 @@
 <template>
-	<scroll class="singer" :theData="hot.item">
+	<scroll class="singer" :theData="hot.item" ref="list">
 	  <div>
 	    <singer-content @clickSinger="clickSinger" :hot="hot"></singer-content>
 	  </div>
@@ -13,9 +13,11 @@ import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
 import SingerContent from './components/SingerContent'
 import Scroll from '@/common/scroll/Scroll'
 import {mapMutations} from 'vuex' //引入存数据进store的方法
+import {playlistMixin} from '@/common/js/mixin'
 
 export default {
   name: 'Singer',
+  mixins:[playlistMixin],
   components:{
   	SingerContent,
   	Scroll
@@ -36,13 +38,12 @@ export default {
   		//执行api的js方法 		
   		getSingers().then((res)=>{
   			if(res.code === ERR_OK){
-  				console.log(res.singerList.data.singerlist)
+  				//console.log(res.singerList.data.singerlist)
   				this.singerlist = res.singerList.data.singerlist
   			}
   		})
   	},
   	_normalizeSinger(){
-  		console.log('1')
   		//创建对象，标题和数组
   		let map = {
   			hot:{
@@ -61,7 +62,7 @@ export default {
   				})
   			}
   		})
-  		console.log(map.hot)
+  		//console.log(map.hot)
   		this.hot = map.hot
   	},
     clickSinger(singer){
@@ -72,6 +73,14 @@ export default {
       //调用store方法，存入数据参数
       this.setSinger(singer)
     },
+    //小播放组件显示时，重新定位和刷新scrol
+      handlePlaylist(playlist){
+        const bottom = playlist.length>0 ? '60px':''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
+
+
     ...mapMutations({
       setSinger:'SET_SINGER'  //用到事件名
     })

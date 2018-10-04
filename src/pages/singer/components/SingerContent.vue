@@ -11,8 +11,8 @@
       </li> 
     </ul> 
     <!--加载中 公共组件-->
-    <div class="singer-loading">
-      <loading v-show="!hot.title"></loading>
+    <div class="singer-loading" v-show="!hot.title">
+      <loading></loading>
     </div>
   </div>
 </template>

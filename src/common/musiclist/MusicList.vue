@@ -19,7 +19,7 @@
         :probe-type="probeType" 
         :listen-scroll="listenScroll" 
         @scroll="scroll"
-         
+        ref="list"
         class="songlist-wrapper"
       >
         <div>
@@ -41,9 +41,10 @@ import SongList from './components/SongList'
 import Scroll from '@/common/scroll/Scroll'
 import Loading from '@/common/loading/loading'
 import {mapActions} from 'vuex'
-
+import {playlistMixin}  from '@/common/js/mixin'  //引用多个组件的重复逻辑
 
   export default {
+    mixins:[playlistMixin], //数组可以写多个mixin
     components:{
       SongList,
       Scroll,
@@ -82,6 +83,12 @@ import {mapActions} from 'vuex'
       //设置播放参数action
       random(){
         this.randomPlay({list:this.songs})
+      },
+      //小播放组件显示时，重新定位和刷新scrol
+      handlePlaylist(playlist){
+        const bottom = playlist.length>0 ? '100px':''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
       },
       ...mapActions([
           'selectPlay',

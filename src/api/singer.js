@@ -31,7 +31,7 @@ export function getSingers(){
 	//通过自身模拟服务器访问有host权限的数据
 	//先传入url和host获取服务器作为url，再传入hash完整获取
 	const urlfront = '/api/getSingers'
-	console.log(urlfront)
+	//console.log(urlfront)
 
 	//把hash做成对象,es6创建对象并赋值,
 	//hash获取不了，要手动输入所有，把对象分2类，固定和不固定

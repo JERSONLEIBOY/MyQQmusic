@@ -15,10 +15,11 @@ import {ERR_OK} from '@/api/config'	//引入自定义的公共变量
 import RecommendSwiper from './components/RecommendSwiper'
 import RecommendContent from './components/RecommendContent'
 import Scroll from '@/common/scroll/Scroll'
-
+import {playlistMixin} from '@/common/js/mixin'
 
 export default {
   name: 'Recommend',
+  mixins:[playlistMixin],
   data() {
       return {    	
         sliders:[],
@@ -50,7 +51,7 @@ export default {
   		//执行api中的js方法（一个模块可以多个方法）
   		getDiscList().then((res)=>{
   			if (res.code === ERR_OK) {
-  				console.log(res.data.list)
+  				//console.log(res.data.list)
   				this.discList = res.data.list
   			}
   		})
@@ -61,9 +62,15 @@ export default {
   	//解决方法，监听轮播图完成了再刷新scroll
   	imgload(things){
   		//子组件完成图片加载触发刷新
-  		console.log(things)
+  		//console.log(things)
   		this.$refs.scroll.refresh()
-  	}
+  	},
+    //小播放组件显示时，重新定位和刷新scrol
+      handlePlaylist(playlist){
+        const bottom = playlist.length>0 ? '60px':''
+        this.$refs.scroll.$el.style.bottom = bottom
+        this.$refs.scroll.refresh()
+      },
   }
 
 }
