@@ -68,6 +68,21 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       }),
+      //歌单详情数据
+      app.get('/api/getRecommendMenu', (req, res) => {
+        var url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/n/yqq/playsquare/4162546250.html',
+            host: 'c.y.qq.com'
+          },
+          params: req.query // 通过req从浏览器端发过来的一堆参数(platform，sin，ein等)透传给qq的服务端
+        }).then((response)=>{ // qq服务端的响应数据，再通过res将响应数据输出到浏览器端
+          res.json(response.data)
+        }).catch((error)=>{
+          console.log(error)
+        })
+      }),
       //歌手数据json
       app.get('/api/getSingers', (req, res) => {
         var url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'

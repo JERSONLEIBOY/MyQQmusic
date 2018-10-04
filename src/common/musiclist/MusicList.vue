@@ -152,6 +152,7 @@ import {playlistMixin}  from '@/common/js/mixin'  //引用多个组件的重复�
     top: 6px;
     left: 16px;
     font-size: 24px;
+    color: #fff;
   }
   .musiclist h1{
     z-index: 50;

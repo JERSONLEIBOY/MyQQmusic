@@ -63,3 +63,32 @@ export function getDiscList(){
 		return Promise.resolve(res.data)
 	})
 }
+
+/***歌单详情数据*******/
+//方法js不做成defaul，vue引入时要单花括号
+export function getRecommendMenu(disstid){
+	const urlfront = '/api/getRecommendMenu'
+	//console.log(urlfront)
+
+	//把hash做成对象,es6创建对象并赋值,
+	//hash获取不了，要手动输入所有，把对象分2类，固定和不固定
+	//固定的hash写在变量js模块里， config.js
+	const thehash = Object.assign({},commonParams,{		
+		type: 1,
+		json: 1,
+		utf8: 1,
+		onlysong: 0,
+		platform: 'yqq',
+		uin: 0,
+		needNewCode: 0,
+		disstid:disstid,
+		format: 'json',
+	})
+	//执行jsonp模块
+	return axios.get(urlfront,{
+		params:thehash
+	}).then((res)=>{
+		//console.log(res.data)
+		return Promise.resolve(res.data)
+	})
+}
