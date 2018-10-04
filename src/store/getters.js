@@ -21,4 +21,6 @@ export const currentIndex = state=> state.currentIndex
 export const currentSong = (state)=> {
 	return state.playlist[state.currentIndex]
 }
+/*歌单数据getter映射*/
+export const menu = state=> state.menu
 

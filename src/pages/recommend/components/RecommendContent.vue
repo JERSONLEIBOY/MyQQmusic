@@ -4,7 +4,7 @@
     <h1>热门歌单</h1>
     <!--歌单列表-->
     <ul>
-      <li v-for="item of discList" :key="item.listennum">
+      <li v-for="item of discList" :key="item.listennum" @click="selectMenu(item)">
         <div class="recommend-content_img">
           <img width="60" height="60" v-lazy="item.imgurl" />
         </div>
@@ -23,6 +23,7 @@
 
 <script>
 import Loading from '@/common/loading/loading'
+import {mapMutations} from 'vuex'
 
 export default {
   name: 'RecommendContent',
@@ -34,9 +35,17 @@ export default {
   components:{
     Loading
   },
-  data() {
-      return {        
-      }
+  methods:{
+    selectMenu(item){
+      this.$router.push({
+        path:`/recommend/${item.dissid}`
+      })
+      this.setMenu(item)
+    },
+    //存入vuex数据方法
+    ...mapMutations({
+      setMenu:'SET_MENU'
+    })
   }
 }
 </script>

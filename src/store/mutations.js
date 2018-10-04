@@ -19,17 +19,24 @@ const mutations = {
 	[types.SET_FULL_SCREEN](state,flag){	
 		state.fullScreen = flag	//存入展开状态数据
 	},
-	[types.SET_PLAYLIST](state,list){	
-		state.playlist = list	//存入播放列表数据
+	[types.SET_PLAYLIST](state,list){
+		state.playlist = Object.assign([], list)	//博客解决一堆红色警报，不要在outside state	
+		//state.playlist = list	//存入播放列表数据
 	},
-	[types.SET_SEQUENCE_LIST](state,list){	
-		state.sequenceList = list	//存入歌曲列表数据
+	[types.SET_SEQUENCE_LIST](state,list){
+		state.sequenceList = Object.assign([], list)	
+		//state.sequenceList = list	//存入歌曲列表数据
 	},
 	[types.SET_PLAY_MODE](state,mode){	
 		state.mode = mode	//存入播放模式数据
 	},
 	[types.SET_CURRENT_INDEX](state,mode){	
 		state.currentIndex = mode	//存入当前歌曲序列数据
+	},
+
+	/*存入数据的方法*/
+	[types.SET_MENU](state,menu){	//state固定，menu是参数
+		state.menu = menu
 	},
 }
 export default mutations

@@ -1,6 +1,6 @@
 <template>
   <div class="musiclist">
-    <router-link tag="div" to="/singer" class="musiclist-back"><</router-link>
+    <div @click="musiclistBack" class="musiclist-back"><</div>
     <h1>{{title}}</h1> 
     <div class="musiclist-bgimg" :style="singerimg" ref="bgimg" @click="random">         
       <div class="musiclist-play-wrapper">
@@ -63,7 +63,10 @@ import {playlistMixin}  from '@/common/js/mixin'  //引用多个组件的重复�
         type:String
       },
       songs:{
-        type:Array
+        type:Array,
+        default(){
+          return []
+        }
       }
     },
     computed:{
@@ -83,6 +86,10 @@ import {playlistMixin}  from '@/common/js/mixin'  //引用多个组件的重复�
       //设置播放参数action
       random(){
         this.randomPlay({list:this.songs})
+      },
+      //返回按钮
+      musiclistBack(){
+        this.$router.back()
       },
       //小播放组件显示时，重新定位和刷新scrol
       handlePlaylist(playlist){

@@ -5,7 +5,7 @@
 import {playMode} from '@/common/js/config'	//引入状态码
 
 const state = {
-
+	/*歌手数据*/
 	singer:{},
 	/*播放器数据*/
 	playing:false,	//播放状态
@@ -14,7 +14,8 @@ const state = {
 	sequenceList:[],	//歌曲列表
 	mode:playMode.sequence,	//播放模式
 	currentIndex:-1,	//当前歌曲序列
-
+	/*歌单数据*/
+	menu:{}
 }
 
 export default state

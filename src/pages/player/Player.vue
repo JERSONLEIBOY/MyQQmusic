@@ -273,6 +273,7 @@ export default {
       //优化bug，暂停播放时，歌词不停
       if(this.currentLyric){
         //清除歌词
+        console.log(this.currentLyric)
         this.currentLyric.togglePlay()
       }
   	},

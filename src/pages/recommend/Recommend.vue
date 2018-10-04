@@ -6,6 +6,7 @@
   	<!--歌单列表部分-->
   	<recommend-content :discList="discList"> </recommend-content>  
   </div>
+  <router-view />
   </scroll>
 </template>
 
@@ -78,7 +79,7 @@ export default {
 
 <style>
 	.recommend{
-		position: fixed;
+		position: absolute;
 		top:84px;
 		left: 0;
 		bottom: 0;
