@@ -521,7 +521,8 @@ export default {
   			//console.log(this.currentSong.url)
   			this.$refs.audio.play()
   			this._getLyric()
-  		},1000)		
+  		},1000)	
+      console.log(newSong.url)	
   	},
   	playing(item){
   		this.$nextTick(()=>{

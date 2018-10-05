@@ -23,7 +23,7 @@
         class="songlist-wrapper"
       >
         <div>
-          <song-list @select="selectItem" :songs="songs"></song-list>
+          <song-list :rank="rank" @select="selectItem" :songs="songs"></song-list>
         </div>
       </scroll>
 
@@ -67,6 +67,10 @@ import {playlistMixin}  from '@/common/js/mixin'  //引用多个组件的重复�
         default(){
           return []
         }
+      },
+      rank:{
+        type:Boolean,
+        default:false
       }
     },
     computed:{
@@ -173,6 +177,7 @@ import {playlistMixin}  from '@/common/js/mixin'  //引用多个组件的重复�
     height: 0;
     padding-top: 70%;
     transform-origin:top;
+    background-color: #fff;
     background-size: cover;
   }
   .musiclist-bgimg_filter{

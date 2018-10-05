@@ -24,3 +24,6 @@ export const currentSong = (state)=> {
 /*歌单数据getter映射*/
 export const menu = state=> state.menu
 
+/*排行榜数据getter映射*/
+export const topList = state=> state.topList
+

@@ -38,5 +38,9 @@ const mutations = {
 	[types.SET_MENU](state,menu){	//state固定，menu是参数
 		state.menu = menu
 	},
+	/*存入数据的方法*/
+	[types.SET_TOPLIST](state,topList){	//state固定，topList是参数
+		state.topList = topList
+	},
 }
 export default mutations
