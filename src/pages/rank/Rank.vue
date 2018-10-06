@@ -18,7 +18,7 @@
     		</li>
     	</ul>
     	<!--‘加载中’组件-->
-    	<loading class="loading-container"></loading>
+    	<loading class="loading-container" v-show="!topList"></loading>
     </scroll>
 
     <!--详情页路由-->
