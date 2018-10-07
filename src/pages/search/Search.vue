@@ -1,8 +1,8 @@
 <template>
   <div class="search">
   	<search-box @query="getQuery" ref="searchbox"></search-box>
-  	<search-hotkey @addQuery="addQuery"></search-hotkey>
-    <search-suggest :query="query"></search-suggest>
+  	<search-hotkey v-show="!query" @addQuery="addQuery"></search-hotkey>
+    <search-suggest v-show="query" :query="query"></search-suggest>
   </div>
 </template>
 
