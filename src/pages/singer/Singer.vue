@@ -71,6 +71,7 @@ export default {
         path: `/singer/${singer.id}`  //es6语法，详情页的动态路由
       })
       //调用store方法，存入数据参数
+      console.log(singer)
       this.setSinger(singer)
     },
     //小播放组件显示时，重新定位和刷新scrol
@@ -100,5 +101,6 @@ export default {
 		left: 0;
 		bottom: 0;
 		width: 100%;
+    overflow: hidden;
 	}
 </style>

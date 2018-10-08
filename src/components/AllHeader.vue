@@ -13,7 +13,7 @@ export default {
 
 <style>
   .allheader{
-    z-index: 99;
+    /*z-index: 99;*/
     position: fixed;
     top: 0;
     left: 0;

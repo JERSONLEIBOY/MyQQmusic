@@ -36,8 +36,6 @@ export default {
     }
   },
   created(){
-    //console.log(this.singer.id)
-
     this._getSingerDetail()
   },
   methods:{

@@ -2,7 +2,8 @@
   <div class="search">
   	<search-box @query="getQuery" ref="searchbox"></search-box>
   	<search-hotkey v-show="!query" @addQuery="addQuery"></search-hotkey>
-    <search-suggest v-show="query" :query="query"></search-suggest>
+    <search-suggest @selectSinger="selectSinger" v-show="query" :query="query"></search-suggest>
+    <router-view/>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import SearchBox from '@/common/searchbox/SearchBox'	//引入公共组件搜索框
 import SearchHotkey from './components/SearchHotkey'	//引入组件热门关键词
 import SearchSuggest from './components/SearchSuggest'	//引入组件搜索结果展示
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'Search',
@@ -18,6 +20,11 @@ export default {
   	SearchHotkey,
   	SearchSuggest
   },
+  computed:{
+    ...mapGetters([
+      'singer'
+    ])
+  },
   data(){
   	return {
   		hotKey:'',
@@ -25,6 +32,12 @@ export default {
   	}
   },
   methods:{
+/*****跳转路由，歌手详情页*********/
+    selectSinger(){
+      this.$router.push({
+        path:`/search/${this.singer.id}`
+      })
+    },
   	//获取热门关键词子组件的值
   	addQuery(item){
   		this.$refs.searchbox.setQuery(item)

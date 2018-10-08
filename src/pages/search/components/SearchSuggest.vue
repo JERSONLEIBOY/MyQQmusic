@@ -7,7 +7,7 @@
     class="search-suggest"
   >
     <ul>
-      <li v-for="(item,index) of result">
+      <li @click="selectItem(item)" v-for="(item,index) of result">
         <i class="iconfont " :class="_otherIcon(item)">
           <img 
             v-if="item.type ==='singer'" 
@@ -23,7 +23,7 @@
       <!--下拉刷新的加载组件-->
       <loading v-show="hasMore"></loading>
     </ul>
-  </scroll>
+  </scroll> 
 </template>
 
 <script>
@@ -33,6 +33,8 @@ import {createSong} from '@/common/js/song.js'  //提取数据的方法做成新
 import {getSongs} from '@/api/singer'  //获取歌曲url数据的方法
 import Scroll from '@/common/scroll/Scroll' //引入公共组件滚动
 import loading from '@/common/loading/loading' //引入公共组件滚动
+import Singer from '@/common/js/singer' //引入歌手数据提取方法类
+import {mapMutations} from 'vuex' //引入点击存入数据方法的vuex
 
 const TYPE_SINGER = 'singer'
 const perpage = 20 //搜索页一次展示多少数据常量
@@ -66,6 +68,20 @@ export default {
     
   },
   methods:{
+/*****跳转路由，歌手详情页*********/
+  selectItem(item){
+    //判断是歌手，并把歌手数据提取出出来
+    if(item.type===TYPE_SINGER){
+      const singer = new Singer({
+        id:item.singerid,
+        mid:item.singermid,
+        name:item.singername
+      })
+      //把点击的数据存入state自动渲染入歌手详情页
+      this.setSinger(singer)
+      this.$emit('selectSinger')     
+    }
+  },
 /******判断展示歌手或是歌曲搜索结果********/
     resultTitle(item){
       //当数据是歌手的时候展示歌手数据
@@ -110,7 +126,6 @@ export default {
         }
       })
     },
-
 /**获取数据方法*****/
     _getSearch(){
       this.hasMore = true   //默认设置true，然后判断已经是最新的时候置为false
@@ -171,15 +186,19 @@ export default {
               songUrl = res.req_0.data.midurlinfo[0].purl  
               ret.push(createSong(musicData,songUrl)) 
               pushIndex++
-              console.log(pushIndex)
-              console.log(list.length)
+              //console.log(pushIndex)
+              //console.log(list.length)
               this.pushOver = list.length===pushIndex
             }            
           })
         }
       })
       return ret
-    }
+    },
+/****选择歌手存入歌手详情页数据*******/
+    ...mapMutations({
+      setSinger:'SET_SINGER'
+    })
   },
   watch:{
     //监听输入框值，湖区搜索结果数据
