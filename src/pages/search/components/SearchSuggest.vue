@@ -34,7 +34,7 @@ import {getSongs} from '@/api/singer'  //获取歌曲url数据的方法
 import Scroll from '@/common/scroll/Scroll' //引入公共组件滚动
 import loading from '@/common/loading/loading' //引入公共组件滚动
 import Singer from '@/common/js/singer' //引入歌手数据提取方法类
-import {mapMutations} from 'vuex' //引入点击存入数据方法的vuex
+import {mapMutations,mapActions} from 'vuex' //引入点击存入数据方法的vuex
 
 const TYPE_SINGER = 'singer'
 const perpage = 20 //搜索页一次展示多少数据常量
@@ -80,7 +80,11 @@ export default {
       //把点击的数据存入state自动渲染入歌手详情页
       this.setSinger(singer)
       this.$emit('selectSinger')     
+    }else{
+      //点击是歌曲,修改歌曲列表数据
+      this.insertSong(item)
     }
+
   },
 /******判断展示歌手或是歌曲搜索结果********/
     resultTitle(item){
@@ -198,7 +202,11 @@ export default {
 /****选择歌手存入歌手详情页数据*******/
     ...mapMutations({
       setSinger:'SET_SINGER'
-    })
+    }),
+/*******选择歌曲插入歌曲列表数据*************/
+    ...mapActions([
+      'insertSong'
+    ])
   },
   watch:{
     //监听输入框值，湖区搜索结果数据

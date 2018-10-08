@@ -499,12 +499,13 @@ export default {
   watch:{
 
   	currentSong(newSong,oldSong){
+      console.log(newSong)
       if (!newSong.id) {
         console.log('旧的'+oldSong)
           return
         }
-        
-  		/*if(newSong.id===oldSong.id){
+      /*//添加的当前歌曲和前面重复 要无视
+  		if(newSong.id===oldSong.id){
         console.log(newSong.id===oldSong.id)
   			return 
   		}*/
