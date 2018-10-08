@@ -16,13 +16,20 @@ export default {
       type:Number,
       default:1
     },
+    //开启点击，默认true
     click:{
       type:Boolean,
       default:true
     },
+    //开启监听滚动的值，默认false
     listenScroll: {
       type: Boolean,
       default: false
+    },
+    //开启滚动到底部事件，默认false
+    pullup:{
+      type:Boolean,
+      default:false
     },
     //传入数据，用于监听是否渲染完成，就refresh
     theData:{
@@ -45,11 +52,22 @@ export default {
         probeType:this.probeType,
         click:this.click
       })
-
+      //开启滚动获取值的事件
       if (this.listenScroll) {
         let me = this
         this.scroll.on('scroll', (pos) => {
           me.$emit('scroll', pos)
+        })
+      }
+      //开启滚动到底部触发事件
+      if(this.pullup){
+        let me = this
+        this.scroll.on('scrollEnd',()=>{
+          //当滚动值(上拉手势，是正数)小于scroll的压面y+50时，触发事件
+          if(me.scroll.y <= (me.scroll.maxScrollY+50)){
+            //箭头函数要把this指向纠正，但是箭头函数内的判断里就不需要纠正了
+            me.$emit('scrollToEnd')
+          }
         })
       }
     },

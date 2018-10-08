@@ -1,5 +1,11 @@
 <template>
-  <scroll :data="query" class="search-suggest">
+  <scroll 
+    :data="query" 
+    :pullup="pullup"
+    @scrollToEnd="searchMore"
+    ref="suggest"
+    class="search-suggest"
+  >
     <ul>
       <li v-for="(item,index) of result">
         <i class="iconfont " :class="_otherIcon(item)">
@@ -14,6 +20,8 @@
           <p>{{resultDics(item)}}</p>
         </div>
       </li>
+      <!--下拉刷新的加载组件-->
+      <loading v-show="hasMore"></loading>
     </ul>
   </scroll>
 </template>
@@ -24,8 +32,10 @@ import {ERR_OK} from '@/api/config' //引入获取数据常用变量
 import {createSong} from '@/common/js/song.js'  //提取数据的方法做成新对象
 import {getSongs} from '@/api/singer'  //获取歌曲url数据的方法
 import Scroll from '@/common/scroll/Scroll' //引入公共组件滚动
+import loading from '@/common/loading/loading' //引入公共组件滚动
 
 const TYPE_SINGER = 'singer'
+const perpage = 20 //搜索页一次展示多少数据常量
 
 export default {
   name: 'SearchSuggest',
@@ -36,7 +46,8 @@ export default {
     }
   },
   components:{
-    Scroll
+    Scroll,
+    loading
   },
   data(){
     return {
@@ -44,14 +55,18 @@ export default {
       showSinger:true,
       result:[],
       searchSongs:[],
-      zhida:{}
+      zhida:{},
+      pullup:true,  //开启滚动组件的滚动到底部事件
+      hasMore:false,  //用于判断是否执行重新获取数据的标识
+      oldSearch:[],
+      pushOver:false,
     }
   },
   computed:{
     
   },
   methods:{
-    /******判断展示歌手或是歌曲搜索结果********/
+/******判断展示歌手或是歌曲搜索结果********/
     resultTitle(item){
       //当数据是歌手的时候展示歌手数据
       if(item.type===TYPE_SINGER){
@@ -79,25 +94,66 @@ export default {
         return 'icon-yinyue search-suggest_icon'
       }
     },
-    /**获取数据方法*****/
+/*****下拉刷新，重新获取数据********/
+    searchMore(){
+      //需要判断当前数据是否已经是最新的hasMore,为fasle就不执行
+      if(!this.hasMore){
+        return 
+      }
+      this.page++   //获取到下一页的数据
+      getSearch(this.query,this.page,this.showSinger,perpage).then((res)=>{
+        if(res.code === ERR_OK){
+          //把下一页数据，拼接上原页面数据
+          this.searchSongs = this._nomalizeSongs(res.data.song.list)
+          //判断是否还有新数据
+          this._checkMore(res.data.song)
+        }
+      })
+    },
+
+/**获取数据方法*****/
     _getSearch(){
-      getSearch(this.query,this.page,this.showSinger).then((res)=>{
+      this.hasMore = true   //默认设置true，然后判断已经是最新的时候置为false
+      this.page = 1
+      this.$refs.suggest.scrollTo(0,0)
+      getSearch(this.query,this.page,this.showSinger,perpage).then((res)=>{
         if(res.code === ERR_OK){
           this.zhida = res.data.zhida
           this.searchSongs = this._nomalizeSongs(res.data.song.list)
+          this._checkMore(res.data.song)   //执行判断是否还有数据，计算总数
           /*this.result = this._genResult(res.data)
           console.log(this.result)*/
         }
       })
     },
+    //计算搜索结果总数，判断是否执行获取新数据
+    _checkMore(data){
+      //console.log(data.curnum+data.curpage*perpage)
+      //console.log(data.totalnum)
+      if(!data.list.length || (data.curnum+data.curpage*perpage) > data.totalnum){
+        this.hasMore = false
+      }
+    },
     //有zhida就合并对象到数组中
-    _genResult(data,value){
+    _genResult(data,newValue){
       let ret = []
       if(data.singerid){
         ret.push({...this.zhida,...{type:TYPE_SINGER}})  //es6语法，对象拓展符。等同于object.assign()新建对象
         //console.log(ret)
       }
-      if (value) {
+      if (newValue) {
+        let value = []        
+        if(this.page>1){ 
+          //console.log('新获取的一页数据'+ newValue)
+          //console.log('存起来的旧数据'+this.oldSearch)
+          value = this.oldSearch.concat(newValue)
+          //console.log('拼起来的数据'+value)
+          this.oldSearch = value
+        }else{
+          this.oldSearch = []
+          value = newValue
+          this.oldSearch = value
+        }
         ret = ret.concat(value)
       }
       this.result = ret
@@ -105,14 +161,19 @@ export default {
     //歌曲列表数据的提取
     _nomalizeSongs(list){
       let ret = []
+      let pushIndex =0  //判断是否是最最后一次push 
       list.forEach((musicData)=>{
         if(musicData.songid && musicData.albummid){
           //获取歌曲源url数据
-          let songUrl = ''
+          let songUrl = ''         
           getSongs(musicData.songmid).then((res)=>{
             if(res.code === ERR_OK){
               songUrl = res.req_0.data.midurlinfo[0].purl  
               ret.push(createSong(musicData,songUrl)) 
+              pushIndex++
+              console.log(pushIndex)
+              console.log(list.length)
+              this.pushOver = list.length===pushIndex
             }            
           })
         }
@@ -126,8 +187,11 @@ export default {
       this._getSearch()
     },
     //监听异步问题，对数据无法操作，把值赋值出来
-    searchSongs(value){
-      this._genResult(this.zhida,value)
+    searchSongs(newValue){
+      console.log(this.pushOver)
+      if(this.pushOver){     
+        this._genResult(this.zhida,newValue)
+      }     
     }
   },
 

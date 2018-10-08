@@ -58,7 +58,7 @@ export function getHotKey(){
 }*/
 //
 //搜索结果数据
-export function getSearch(query,page,zhida){
+export function getSearch(query,page,zhida,perpage){
 	//自己判断截取出url前半段
 	//通过自身模拟服务器访问有host权限的数据
 	//先传入url和host获取服务器作为url，再传入hash完整获取
@@ -81,8 +81,8 @@ export function getSearch(query,page,zhida){
 		ie: 'utf-8',
 		sem: 1,
 		aggr: 0,
-		perpage: 20,
-		n: 20,	
+		perpage: perpage,
+		n: perpage,	
 		remoteplace: 'txt.mqq.all',
 		format: 'json',
 	})
