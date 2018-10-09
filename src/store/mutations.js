@@ -42,5 +42,10 @@ const mutations = {
 	[types.SET_TOPLIST](state,topList){	//state固定，topList是参数
 		state.topList = topList
 	},
+	/**/
+	/*存入搜索历史数据的方法*/
+	[types.SET_SEARCH_HISTORY](state,history){	//state固定，SEARCH_HISTORY是参数
+		state.searchHistory = history
+	},
 }
 export default mutations

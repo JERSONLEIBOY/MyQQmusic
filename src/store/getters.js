@@ -27,3 +27,6 @@ export const menu = state=> state.menu
 /*排行榜数据getter映射*/
 export const topList = state=> state.topList
 
+/*搜索历史数据getter映射*/
+export const searchHistory = state=> state.searchHistory
+

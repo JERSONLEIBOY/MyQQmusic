@@ -10,6 +10,8 @@ import * as types from './mutation-types'
 import {playMode} from '@/common/js/config'
 //引入打乱顺序方法
 import {shuffle} from '@/common/js/util'
+//引入存入本地缓存方法
+import {saveSearch} from '@/common/js/cache'
 
 //找到当前点击歌曲在随机歌曲列表中的序列
 function findIndex(list,song){
@@ -93,4 +95,10 @@ export const insertSong = function ({commit,state},song){
 	commit(types.SET_SEQUENCE_LIST,sequenceList)	//存入歌曲列表
 	commit(types.SET_FULL_SCREEN,true)	//存入当前展开状态
 	commit(types.SET_PLAYING_STATE,true)	//存入当前播放状态
+}
+
+/*****点击搜索结果li，添加关键词到搜索历史中，因为多个数据操作，浏览器本地缓存*************/
+//用到js逻辑计算添加到首个，用到插件 非官方的good local
+export const saveSearchHistory = function({commit},query){
+	commit(types.SET_SEARCH_HISTORY,saveSearch(query))
 }

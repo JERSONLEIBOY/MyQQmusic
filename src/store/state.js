@@ -3,6 +3,7 @@
  *输出state
 */
 import {playMode} from '@/common/js/config'	//引入状态码
+import {loadSearch} from '@/common/js/cache'	//引入获取本地缓存的方法
 
 const state = {
 	/*歌手数据*/
@@ -17,7 +18,9 @@ const state = {
 	/*歌单数据*/
 	menu:{},
 	/*排行榜数据*/
-	topList:{}
+	topList:{},
+	/*搜索历史关键词query数据*/
+	searchHistory:loadSearch()	//如果本地缓存有数据就用本地缓存
 }
 
 export default state

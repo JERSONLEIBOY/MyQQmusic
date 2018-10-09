@@ -93,7 +93,8 @@ export default {
       //点击是歌曲,修改歌曲列表数据
       this.insertSong(item)
     }
-
+    //存入搜索历史的关键词query数据到vuex
+    this.saveSearchHistory(this.query)
   },
 /******判断展示歌手或是歌曲搜索结果********/
     resultTitle(item){
@@ -218,7 +219,8 @@ export default {
     }),
 /*******选择歌曲插入歌曲列表数据*************/
     ...mapActions([
-      'insertSong'
+      'insertSong',
+      'saveSearchHistory'
     ])
   
   },
