@@ -64,10 +64,14 @@ export const insertSong = function ({commit,state},song){
 	playlist.splice(currentIndex,0,song)
 	// 插入完成后，已有歌曲要删除
 	if(fpIndex > -1){
+		console.log('有重复歌曲')
 		if(currentIndex>fpIndex){
 			playlist.splice(fpIndex,1)	//当重复项在插入前面
+			currentIndex--	//插入的位置要减一
+			console.log('删除前面一播放的重复歌曲')
 		}else{
 			playlist.splice(fpIndex+1,1)	//当重复项在插入项后面
+			console.log('删除后面将播放的重复歌曲'+playlist)
 		}
 	}
 	/****插入歌曲列表******/

@@ -498,10 +498,10 @@ export default {
   //监听当前歌曲改变时播放音乐
   watch:{
 
-  	currentSong(newSong,oldSong){
-      console.log(newSong)
-      if (!newSong.id) {
-        console.log('旧的'+oldSong)
+  	currentSong(newSong){
+      //console.log(newSong)
+      if (!newSong) {
+
           return
         }
       /*//添加的当前歌曲和前面重复 要无视
