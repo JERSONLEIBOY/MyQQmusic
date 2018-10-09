@@ -2,7 +2,12 @@
   <div class="search">
   	<search-box @query="getQuery" ref="searchbox"></search-box>
   	<search-hotkey v-show="!query" @addQuery="addQuery"></search-hotkey>
-    <search-suggest @selectSinger="selectSinger" v-show="query" :query="query"></search-suggest>
+    <search-suggest 
+      @listScroll="blurInput" 
+      @selectSinger="selectSinger" 
+      v-show="query" 
+      :query="query"
+    ></search-suggest>
     <router-view/>
   </div>
 </template>
@@ -32,6 +37,11 @@ export default {
   	}
   },
   methods:{
+/*********滚动前，收起键盘****************/
+    blurInput(){
+      //执行子组件搜索框的事件，这个事件操作input标签收起键盘
+      this.$refs.searchbox.blur()
+    },
 /*****跳转路由，歌手详情页*********/
     selectSinger(){
       this.$router.push({

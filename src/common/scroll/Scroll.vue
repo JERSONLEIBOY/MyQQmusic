@@ -31,6 +31,11 @@ export default {
       type:Boolean,
       default:false
     },
+    //开启滚动前事件，用于收起键盘
+    beforScoll:{
+      type:Boolean,
+      default:false
+    },
     //传入数据，用于监听是否渲染完成，就refresh
     theData:{
       type:Array,
@@ -68,6 +73,12 @@ export default {
             //箭头函数要把this指向纠正，但是箭头函数内的判断里就不需要纠正了
             me.$emit('scrollToEnd')
           }
+        })
+      }
+      //开启滚动前事件收起键盘
+      if(this.beforScoll){
+        this.scroll.on('beforScollStart',()=>{
+          this.$emit('beforScoll')
         })
       }
     },

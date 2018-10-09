@@ -17,3 +17,22 @@ export function shuffle(arr){
 	}
 	return _arr
 }
+
+
+
+/*****节流定时器，延时执行，并封在封闭函数中不往下走***********/
+export function debounce(func,delay) {
+	// 这是那个封闭函数
+	let timer
+
+	//再执行延时即可
+	return function (...args){
+		//监听会持续执行 判断是否已有定时器
+		if(timer){
+			clearTimeout(timer)
+		}
+		timer = setTimeout(()=>{
+			func.apply(this,args)	//修正this指向，传入延时方法的参数
+		},delay)
+	}
+}

@@ -1,12 +1,13 @@
 <template>
   <div class="search-box">
     <i class="iconfont">&#xe601;</i>
-    <input type="text" v-model="query" class="search-box_ins" :placeholder="placeholder" />
+    <input ref="queryinput" type="text" v-model="query" class="search-box_ins" :placeholder="placeholder" />
     <i v-show="query" @click="_clearQuery" class="iconfont">&#xe674;</i>
   </div>
 </template>
 
 <script>
+import {debounce} from '@/common/js/util'
 
 export default {
   name: 'SearchBox',
@@ -28,13 +29,25 @@ export default {
     /******设置方法给父组件调用**********/
     setQuery(item){
       this.query = item
+    },
+    /*********设置方法给父组件调用***********************/
+    blur(){
+      this.$refs.queryinput.blur()
     }
+  },
+  created(){
+    //为什么直接用watch不行
+    this.$watch('query',debounce((newQuery)=>{
+      this.$emit('query',newQuery)
+    },200))
   },
   watch:{
     //输入框的值改变就派发事件，值出去
-    query(value){
-      this.$emit('query',value)
-    }
+   /* query(value){
+      debounce((value)=>{
+        this.$emit('query',value)
+      },200)    
+    }*/
   }
 }
 </script>

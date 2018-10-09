@@ -3,6 +3,8 @@
     :data="query" 
     :pullup="pullup"
     @scrollToEnd="searchMore"
+    :beforScroll="beforScroll"
+    @beforScroll="listScroll"
     ref="suggest"
     class="search-suggest"
   >
@@ -23,6 +25,10 @@
       <!--下拉刷新的加载组件-->
       <loading v-show="hasMore"></loading>
     </ul>
+    <!--无搜索结果组件-->
+    <div class="search-nosuggest" v-show="!hasMore && !result.length">
+      <no-result title="抱歉，暂无搜索结果"></no-result>
+    </div>    
   </scroll> 
 </template>
 
@@ -33,6 +39,7 @@ import {createSong} from '@/common/js/song.js'  //提取数据的方法做成新
 import {getSongs} from '@/api/singer'  //获取歌曲url数据的方法
 import Scroll from '@/common/scroll/Scroll' //引入公共组件滚动
 import loading from '@/common/loading/loading' //引入公共组件滚动
+import NoResult from '@/common/no-result/NoResult' //引入公共组件无搜索结果
 import Singer from '@/common/js/singer' //引入歌手数据提取方法类
 import {mapMutations,mapActions} from 'vuex' //引入点击存入数据方法的vuex
 
@@ -49,7 +56,8 @@ export default {
   },
   components:{
     Scroll,
-    loading
+    loading,
+    NoResult
   },
   data(){
     return {
@@ -62,6 +70,7 @@ export default {
       hasMore:false,  //用于判断是否执行重新获取数据的标识
       oldSearch:[],
       pushOver:false,
+      beforScroll:true,  //开启滚动前事件，收起键盘
     }
   },
   computed:{
@@ -199,6 +208,10 @@ export default {
       })
       return ret
     },
+/*****滚动前触发事件，给父组件去收起键盘***********/
+  listScroll(){
+    this.$emit('listScroll')
+  },
 /****选择歌手存入歌手详情页数据*******/
     ...mapMutations({
       setSinger:'SET_SINGER'
@@ -207,6 +220,7 @@ export default {
     ...mapActions([
       'insertSong'
     ])
+  
   },
   watch:{
     //监听输入框值，湖区搜索结果数据
@@ -274,5 +288,12 @@ export default {
     color: #808080;
     margin-top: 6px;
     font-size: 12px;
+  }
+/*无搜索结果组件位置*/
+  .search-nosuggest{
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
   }
 </style>
