@@ -3,16 +3,17 @@
     <div class="search-history" >
       <div class="search-history_title">
         <h1>搜索历史</h1>
-        <i class="iconfont">&#xe61d;</i>
+        <i class="iconfont" @click="clearSearchHistory">&#xe61d;</i>
       </div>     
       <!--公共组件，历史列表，其他页面会用到-->
-      <search-list :searches="searches"></search-list>
+      <search-list @select="select" @deleteOne="deleteSearchHistory" :searches="searches"></search-list>
     </div>
   </div>
 </template>
 
 <script>
 import searchList from '@/common/search-list/searchList'
+import {mapActions} from 'vuex'
 
 export default {
   name: 'SearchHistory',
@@ -26,6 +27,14 @@ export default {
     }
   },
   methods:{
+    //点击搜索历史li
+    select(item){
+      this.$emit('select',item)
+    },
+    ...mapActions([
+      'deleteSearchHistory',
+      'clearSearchHistory'  //直接在html中调用action方法
+    ])
   }
 
 }

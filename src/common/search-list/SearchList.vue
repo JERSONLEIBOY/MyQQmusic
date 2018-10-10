@@ -1,9 +1,9 @@
 <template>
   <div class="search-list">
     <ul>
-      <li v-for="item of searches">
+      <li v-for="item of searches" @click="selectItem(item)">
         <p>{{item}}</p>
-        <i class="iconfont">&#xe674;</i>
+        <i class="iconfont" @click.stop="deleteOne(item)">&#xe674;</i>
       </li>
     </ul>
   </div>
@@ -20,6 +20,13 @@ export default {
     }
   },
   methods:{
+    //派发给父组件执行
+    selectItem(item){
+      this.$emit('select',item)
+    },
+    deleteOne(item){
+      this.$emit('deleteOne',item)
+    }
   }
 
 }

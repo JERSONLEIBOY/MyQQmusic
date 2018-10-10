@@ -24,7 +24,7 @@ function insertArray(arr,val,maxLen,compare){	//(搜索记录数组，添加的�
 	}
 }
 
-
+/***********存入搜索历史到本地缓存***************************/
 export function saveSearch(query){
 	//如果已有历史就get缓存中的数组，没有就空数组
 	let searches = storage.get(SEARCH_KEY,[])	//(自定义key,无值默认空数组)
@@ -40,4 +40,34 @@ export function saveSearch(query){
 /******states获取本地缓存中的数据*********/
 export function loadSearch(){
 	return storage.get(SEARCH_KEY,[])
+}
+
+/*******actions删除搜索历史关键词*************/
+function deleteFromArray(arr,compare){
+	//找到点击的index
+	const index = arr.findIndex(compare)
+	if(index>-1){
+		arr.splice(index,1)
+	}
+}
+
+/*************删除本地缓存中的搜索历史***********************************/
+export function deleteSearch(query){
+	//如果已有历史就get缓存中的数组，没有就空数组
+	let searches = storage.get(SEARCH_KEY,[])	//(自定义key,无值默认空数组)
+	//对传入的项与已有数组进行操作
+	deleteFromArray(searches,(item)=>{
+		return item===query
+	})
+	//把操作过后的数组set就直接替换掉原历史
+	storage.set(SEARCH_KEY,searches)
+	return searches
+}
+
+/*************清空本地缓存中的搜索历史***********************************/
+export function clearSearch(){
+	//清空缓存
+	storage.remove(SEARCH_KEY)
+	//返回一个空数组
+	return []
 }

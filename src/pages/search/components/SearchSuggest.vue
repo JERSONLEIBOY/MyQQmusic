@@ -243,6 +243,7 @@ export default {
 
 <style>
   .search-suggest{
+    z-index: 1;
     position: absolute;
     top: 60px;
     width: 100%;

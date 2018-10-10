@@ -2,7 +2,7 @@
   <div class="search">
   	<search-box @query="getQuery" ref="searchbox"></search-box>
   	<search-hotkey v-show="!query" @addQuery="addQuery"></search-hotkey>
-    <search-history v-show="searchHistory.length" :searches="searchHistory"></search-history>
+    <search-history v-show="searchHistory.length && !query" @select="addQuery" :searches="searchHistory"></search-history>
     <search-suggest 
       @listScroll="blurInput" 
       @selectSinger="selectSinger" 

@@ -11,7 +11,7 @@ import {playMode} from '@/common/js/config'
 //引入打乱顺序方法
 import {shuffle} from '@/common/js/util'
 //引入存入本地缓存方法
-import {saveSearch} from '@/common/js/cache'
+import {saveSearch,deleteSearch,clearSearch} from '@/common/js/cache'
 
 //找到当前点击歌曲在随机歌曲列表中的序列
 function findIndex(list,song){
@@ -101,4 +101,14 @@ export const insertSong = function ({commit,state},song){
 //用到js逻辑计算添加到首个，用到插件 非官方的good local
 export const saveSearchHistory = function({commit},query){
 	commit(types.SET_SEARCH_HISTORY,saveSearch(query))
+}
+
+/*****点击删除搜索历史，因为多个数据操作，浏览器本地缓存*************/
+export const deleteSearchHistory = function({commit},query){
+	commit(types.SET_SEARCH_HISTORY,deleteSearch(query))
+}
+
+/*****点击清空搜索历史，因为多个数据操作，浏览器本地缓存*************/
+export const clearSearchHistory = function({commit}){
+	commit(types.SET_SEARCH_HISTORY,clearSearch())
 }
