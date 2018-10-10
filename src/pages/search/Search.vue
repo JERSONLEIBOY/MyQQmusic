@@ -2,6 +2,7 @@
   <div class="search">
   	<search-box @query="getQuery" ref="searchbox"></search-box>
   	<search-hotkey v-show="!query" @addQuery="addQuery"></search-hotkey>
+    <search-history v-show="searchHistory.length" :searches="searchHistory"></search-history>
     <search-suggest 
       @listScroll="blurInput" 
       @selectSinger="selectSinger" 
@@ -15,6 +16,7 @@
 <script>
 import SearchBox from '@/common/searchbox/SearchBox'	//引入公共组件搜索框
 import SearchHotkey from './components/SearchHotkey'	//引入组件热门关键词
+import SearchHistory from './components/SearchHistory'  //引入组件热门关键词
 import SearchSuggest from './components/SearchSuggest'	//引入组件搜索结果展示
 import {mapGetters} from 'vuex'
 
@@ -23,11 +25,13 @@ export default {
   components:{
   	SearchBox,
   	SearchHotkey,
+    SearchHistory,
   	SearchSuggest
   },
   computed:{
     ...mapGetters([
-      'singer'
+      'singer',
+      'searchHistory'
     ])
   },
   data(){
@@ -48,11 +52,11 @@ export default {
         path:`/search/${this.singer.id}`
       })
     },
-  	//获取热门关键词子组件的值
+/********获取热门关键词子组件的值********/
   	addQuery(item){
   		this.$refs.searchbox.setQuery(item)
   	},
-  	//获取输入框组件的值
+/*********获取输入框组件的值**********/
   	getQuery(item){
   		this.query = item
   	}
