@@ -68,7 +68,7 @@
 	    		<span class="iconfont" @click="prev">&#xe62c;</span>
 	    		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
 	    		<span class="iconfont" @click="next">&#xe62d;</span>
-	    		<span class="iconfont" :class="iconMode" @click="changeMode"></span>
+	    		<span class="iconfont">&#xe640;</span>
     		</div> 		
     	</div>
 	</div>
@@ -91,7 +91,7 @@
     				@click.stop="togglePlaying"
     			></span>
     		</progress-circle>
-    		<div class="iconfont" :class="iconMode" @click.stop="changeMode"></div>
+    		<div class="iconfont">&#xe640;</div>
     	</div>
 	</div>
 	</transition>

@@ -26,6 +26,7 @@ export default {
       getHotKey().then((res)=>{
         if(res.code === ERR_OK){
           this.hotkey = res.data.hotkey.slice(0,10)
+          this.$emit('hotKey',this.hotkey)
         }
       })
     },

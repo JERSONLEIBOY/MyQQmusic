@@ -42,12 +42,14 @@ import loading from '@/common/loading/loading' //引入公共组件滚动
 import NoResult from '@/common/no-result/NoResult' //引入公共组件无搜索结果
 import Singer from '@/common/js/singer' //引入歌手数据提取方法类
 import {mapMutations,mapActions} from 'vuex' //引入点击存入数据方法的vuex
+import {playlistMixin} from '@/common/js/mixin' //引入mixin重复方法
 
 const TYPE_SINGER = 'singer'
 const perpage = 20 //搜索页一次展示多少数据常量
 
 export default {
   name: 'SearchSuggest',
+  mixins:[playlistMixin],
   props:{
     query:{
       type:String,
@@ -77,6 +79,12 @@ export default {
     
   },
   methods:{
+/******mixin方法引入************/
+    handlePlaylist(playlist){
+      const bottom = playlist.length>0 ? '60px':''
+        this.$refs.suggest.$el.style.bottom = bottom
+        this.$refs.suggest.refresh()
+    },
 /*****跳转路由，歌手详情页*********/
   selectItem(item){
     //判断是歌手，并把歌手数据提取出出来
