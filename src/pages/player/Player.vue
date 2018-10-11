@@ -103,6 +103,10 @@
 		@timeupdate="updateTime"
 		@ended="end"
 	></audio>
+  <!--播放列表展示-->
+  <div>
+    <player-list></player-list>
+  </div>
   </div>
 </template>
 
@@ -116,6 +120,7 @@ import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProgressBar from './components/ProgressBar'
 import ProgressCircle from './components/ProgressCircle'
+import PlayerList from './components/PlayerList'
 import {playMode} from '@/common/js/config'	//引入状态码
 import {shuffle} from '@/common/js/util'
 import Lyric from 'lyric-parser'	
@@ -138,7 +143,8 @@ export default {
   components:{
   	ProgressBar,
   	ProgressCircle,
-    Scroll
+    Scroll,
+    PlayerList
   },
   computed:{
   	//图标计算属性
