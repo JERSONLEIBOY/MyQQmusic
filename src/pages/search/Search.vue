@@ -2,8 +2,8 @@
   <div class="search">
     <!--输入框组件-->
   	<search-box @query="getQuery" ref="searchbox"></search-box>
-    <scroll class="search-scroll" ref="scroll" :data="shortcut">
-      <div>
+    <scroll  ref="scroll" :data="shortcut">
+      <div class="search-scroll">
         <!--热门搜索关键词组件-->
         <search-hotkey v-show="!query" @hotkey="getHotkey" @addQuery="addQuery"></search-hotkey>
         <!--搜索历史列表组件-->
