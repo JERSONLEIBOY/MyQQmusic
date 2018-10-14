@@ -3,8 +3,8 @@
   <div class="player-list" v-show="ifShowList" @click="hiddenList">
     <div class="player-list_wrapper" @click.stop>
       <div class="player-list_header">
-        <i class="iconfont">&#xe66c;</i>
-        <h1>123</h1>
+        <i class="iconfont" :class="iconMode" @click="changeMode"></i>
+        <h1>{{modeText}}</h1>
         <i class="iconfont" @click="showConfirm">&#xe61d;</i>
       </div>
       <scroll ref="listContent" :data="sequenceList" class="player-list_content">
@@ -37,21 +37,25 @@
 <script type="text/ecmascript-6">
 import {mapGetters,mapMutations,mapActions} from 'vuex'  //引入vuex
 import {playMode} from '@/common/js/config' //引入公共变量
+import {playerMixin} from '@/common/js/mixin'
 import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
 import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
 
   export default {
     name: 'PlayerList',
+    mixins:[playerMixin],
     data(){
       return {
         ifShowList:false
       }
     },
     computed:{
+      //播放模式文字
+      modeText(){
+        return this.mode === playMode.sequence?'顺序播放':this.mode===playMode.random?'随机播放':'单曲循环'
+      },
       ...mapGetters([
-        'sequenceList',
         'playlist',
-        'mode',
         'currentSong'
       ])
     },
@@ -152,6 +156,7 @@ import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
     padding: 10px 30px 10px 20px;
     display: flex;
     align-items: center;
+    height: 20px;
     font-size: 14px;
     color: black;
     background-color: #eee;
@@ -159,9 +164,16 @@ import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
   }
   .player-list_header h1{
     flex: 1;
+    margin-left: 8px;
+    color: #31c27c;
   }
   .player-list_header i{
+    font-size: 24px;
+    color: #31c27c;
+  }
+  .player-list_header i:last-child{
     font-size: 18px;
+    color: black;
   }
 /*播放列表内容样式*/
   .player-list_content{
