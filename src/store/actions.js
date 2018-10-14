@@ -112,3 +112,40 @@ export const deleteSearchHistory = function({commit},query){
 export const clearSearchHistory = function({commit}){
 	commit(types.SET_SEARCH_HISTORY,clearSearch())
 }
+
+/*****点击删除播放列表的一首歌*************/
+export const deleteSong = function({commit,state},song){
+	//获取播放列表、歌曲列表、当前序列
+	let playlist = state.playlist.slice()
+	let sequenceList = state.sequenceList.slice()
+	let currentIndex = state.currentIndex
+
+	//找到点击的歌曲在播放列表中的index ,删除
+	let pIndex = findIndex(playlist,song)
+	playlist.splice(pIndex,1)
+	//找到点击的歌曲在歌曲列表中的index ，删除
+	let sIndex = findIndex(sequenceList,song)
+	sequenceList.splice(sIndex,1)
+	//调整正确的index,当正在播放最后一首歌，删除的也是最后一首歌，当前歌曲为上一首
+	if(currentIndex > pIndex || currentIndex===playlist.length){
+		currentIndex--
+	}
+
+	//替换掉原播放列表和歌曲列表和当前歌曲
+	commit(types.SET_PLAYLIST,playlist)	//存入当前播放列表
+	commit(types.SET_SEQUENCE_LIST,sequenceList)	//存入歌曲列表
+	commit(types.SET_CURRENT_INDEX,currentIndex)	//存入当前歌曲序列
+	
+	//当歌曲列表为空，把播放状态停掉（缓存之后即使空，仍会播放，而删除即表示不想听了）
+	if(!playlist.length){
+		commit(types.SET_PLAYING_STATE,false)
+	}
+}
+
+/*****点击清空播放列表的所有歌*************/
+export const deleteSongList = function ({commit}){
+	commit(types.SET_PLAYLIST,[])
+	commit(types.SET_SEQUENCE_LIST,[])
+	commit(types.SET_CURRENT_INDEX,-1)
+	commit(types.SET_PLAYING_STATE,false)
+}

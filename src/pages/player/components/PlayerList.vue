@@ -5,17 +5,17 @@
       <div class="player-list_header">
         <i class="iconfont">&#xe66c;</i>
         <h1>123</h1>
-        <i class="iconfont">&#xe61d;</i>
+        <i class="iconfont" @click="showConfirm">&#xe61d;</i>
       </div>
       <scroll ref="listContent" :data="sequenceList" class="player-list_content">
-        <ul>
-          <li ref="listItem" v-for="(item,index) of sequenceList" @click="selectItem(item,index)">
+        <transition-group name="ul-list" tag="ul" >
+          <li ref="listItem" v-for="(item,index) of sequenceList" :key="item.id" @click="selectItem(item,index)">
             <i class="iconfont" :class="getCurrentIcon(item)"></i>
             <p>{{item.name}}</p>
             <i class="iconfont">&#xe703;</i>
-            <i class="iconfont">&#xe674;</i>
+            <i class="iconfont" @click.stop="deleteOne(item)">&#xe674;</i>
           </li>
-        </ul>
+        </transition-group>
       </scroll>
       <div class="player-list_operate">
         <div class="player-list_operate--add">
@@ -27,14 +27,18 @@
         <span>关闭</span>
       </div>
     </div>
+
+    <!--弹窗页面-->
+    <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
   </div>
 </transition>
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetters,mapMutations} from 'vuex'  //引入vuex
+import {mapGetters,mapMutations,mapActions} from 'vuex'  //引入vuex
 import {playMode} from '@/common/js/config' //引入公共变量
 import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
+import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
 
   export default {
     name: 'PlayerList',
@@ -53,6 +57,7 @@ import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
     },
     components:{
       Scroll,
+      confirm
     },
     methods:{
       showList(){
@@ -84,7 +89,7 @@ import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
         }
         this.setCurrentIndex(index) //设置为点击的index（顺序播放的的index）或者随机的正确index
       },
-/*播放列表滚动到正在播放，展开和切换时触发*/
+/*播放列表自动滚动到正在播放，展开和切换时触发*/
       scrollToCurrent(current){
         //找到在顺序列表中的当前歌曲
         const index = this.sequenceList.findIndex((song)=>{
@@ -92,10 +97,24 @@ import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
         })
         this.$refs.listContent.scrollToElement(this.$refs.listItem[index],300)
       },
-
+/*删除播放列表的歌曲*/
+      deleteOne(item){
+        this.deleteSong(item)
+      },
+/*清空播放列表的歌曲*/
+      showConfirm(){
+        this.$refs.confirm.show()
+      },
+      confirmClear(){
+        this.deleteSongList()
+      },
       ...mapMutations({
         setCurrentIndex:'SET_CURRENT_INDEX',
-      })
+      }),
+      ...mapActions([
+        'deleteSong',
+        'deleteSongList'
+      ])
     },
     watch:{
       currentSong(newSong,oldSong){
@@ -153,7 +172,7 @@ import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
     display: flex;
     font-size: 0;
     height: 40px;
-    line-height: 40px;
+    line-height: 40px;  
     padding: 0 20px 0 20px;
     overflow: hidden;
     border-bottom: 0.6px solid #eee;
@@ -205,5 +224,15 @@ import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
   }
   .list-fade-enter .player-list_wrapper, .list-fade-leave-to .player-list_wrapper{
     transform: translate3d(0, 100%, 0)
+  }
+/*删除的li组动画往上推*/
+  .ul-list-enter-active, .ul-list-leave-active {
+    transition: all 0.3s linear;
+  }
+  .ul-list-enter, .ul-list-leave-to{
+    /*height: 0; /*为什么不生效，没有height？？？*/
+    /*line-height: 0; /*暂停按钮失效了*/
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
   }
 </style>

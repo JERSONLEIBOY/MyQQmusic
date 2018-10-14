@@ -536,6 +536,10 @@ export default {
       console.log(newSong.url)	
   	},
   	playing(item){
+      //当播放列表没有东西，但是播放状态从播放变为不播放时，触发导致undefind，判断当前歌曲为-1
+      if(this.currentIndex===-1){
+        return
+      }
   		this.$nextTick(()=>{
   			const audio = this.$refs.audio
   			if(item){
