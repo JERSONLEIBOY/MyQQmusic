@@ -9,7 +9,7 @@
       </div>
       <scroll ref="listContent" :data="sequenceList" class="player-list_content">
         <ul>
-          <li v-for="item of sequenceList">
+          <li ref="listItem" v-for="(item,index) of sequenceList" @click="selectItem(item,index)">
             <i class="iconfont" :class="getCurrentIcon(item)"></i>
             <p>{{item.name}}</p>
             <i class="iconfont">&#xe703;</i>
@@ -32,8 +32,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetters} from 'vuex'
-import Scroll from '@/common/scroll/Scroll'
+import {mapGetters,mapMutations} from 'vuex'  //引入vuex
+import {playMode} from '@/common/js/config' //引入公共变量
+import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
 
   export default {
     name: 'PlayerList',
@@ -45,6 +46,8 @@ import Scroll from '@/common/scroll/Scroll'
     computed:{
       ...mapGetters([
         'sequenceList',
+        'playlist',
+        'mode',
         'currentSong'
       ])
     },
@@ -56,12 +59,13 @@ import Scroll from '@/common/scroll/Scroll'
         this.ifShowList=true
         setTimeout(()=>{
           this.$refs.listContent.refresh()  //刷新，数据是未展开时就传入了，无法作为刷新依据
+          this.scrollToCurrent(this.currentSong)
         },200)       
       },
       hiddenList(){
         this.ifShowList=false
       },
-      //动态图标正在播放
+/*动态图标_正在播放*/
       getCurrentIcon(item){
         if(this.currentSong.id===item.id){
           return 'icon-zhengzaibofang'
@@ -69,6 +73,38 @@ import Scroll from '@/common/scroll/Scroll'
           return ''
         }
       },
+/*点击歌曲切换*/
+      selectItem(item,index){
+        //播放列表展示的是顺序列表而不是播放列表的原因是：随机播放整个列表要刷新
+        //当随机播放时，点击顺序列表的歌曲，要在播放列表中的index切换
+        if(this.mode === playMode.random){
+          index = this.playlist.findIndex((song)=>{
+            return song.id===item.id
+          })
+        }
+        this.setCurrentIndex(index) //设置为点击的index（顺序播放的的index）或者随机的正确index
+      },
+/*播放列表滚动到正在播放，展开和切换时触发*/
+      scrollToCurrent(current){
+        //找到在顺序列表中的当前歌曲
+        const index = this.sequenceList.findIndex((song)=>{
+          return current.id===song.id
+        })
+        this.$refs.listContent.scrollToElement(this.$refs.listItem[index],300)
+      },
+
+      ...mapMutations({
+        setCurrentIndex:'SET_CURRENT_INDEX',
+      })
+    },
+    watch:{
+      currentSong(newSong,oldSong){
+        if(!this.ifShowList || newSong.id===oldSong.id) {
+          //判断点击的和正在播放的是同一首，则不触发滚动事件
+          return 
+        }
+        this.scrollToCurrent(newSong)
+      }
     }
   }
 </script>
