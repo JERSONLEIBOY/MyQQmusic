@@ -91,7 +91,7 @@
     				@click.stop="togglePlaying"
     			></span>
     		</progress-circle>
-    		<div class="iconfont">&#xe640;</div>
+    		<div class="iconfont" @click.stop="showList">&#xe640;</div>
     	</div>
 	</div>
 	</transition>
@@ -105,7 +105,7 @@
 	></audio>
   <!--播放列表展示-->
   <div>
-    <player-list></player-list>
+    <player-list ref="playList"></player-list>
   </div>
   </div>
 </template>
@@ -491,7 +491,10 @@ export default {
         this.currentLyric.seek(this.currentSong.duration*percent*1000)
       }
   	},
-
+/**********小播放器组件打开播放列表*******************/
+    showList(){
+      this.$refs.playList.showList()
+    },
   	/*存入点击事件触发的是否展示数据*/
   	...mapMutations({
   		setFullScreen:'SET_FULL_SCREEN',
@@ -500,6 +503,7 @@ export default {
   		setPlayMode:'SET_PLAY_MODE',
   		setPlaylist:'SET_PLAYLIST'
   	})
+
   },
   //监听当前歌曲改变时播放音乐
   watch:{
