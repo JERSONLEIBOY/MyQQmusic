@@ -18,7 +18,7 @@
         </transition-group>
       </scroll>
       <div class="player-list_operate">
-        <div class="player-list_operate--add">
+        <div class="player-list_operate--add" @click="showAddSong">
           <i>+</i>
           <span>添加歌曲到队列</span>
         </div>
@@ -30,6 +30,8 @@
 
     <!--弹窗页面-->
     <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+    <!--添加歌曲到列表页面-->
+    <add-song ref="addSong"></add-song>
   </div>
 </transition>
 </template>
@@ -40,6 +42,7 @@ import {playMode} from '@/common/js/config' //引入公共变量
 import {playerMixin} from '@/common/js/mixin'
 import Scroll from '@/common/scroll/Scroll' //引入滚动公共组件
 import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
+import AddSong from '@/pages/addsong/AddSong' //引入添加歌曲到列表公共组件
 
   export default {
     name: 'PlayerList',
@@ -61,7 +64,8 @@ import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
     },
     components:{
       Scroll,
-      confirm
+      confirm,
+      AddSong
     },
     methods:{
       showList(){
@@ -111,6 +115,10 @@ import confirm from '@/common/confirm/confirm' //引入弹窗公共组件
       },
       confirmClear(){
         this.deleteSongList()
+      },
+/*点击打开添加歌曲的页面*/
+      showAddSong(){
+        this.$refs.addSong.show()
       },
       ...mapMutations({
         setCurrentIndex:'SET_CURRENT_INDEX',
