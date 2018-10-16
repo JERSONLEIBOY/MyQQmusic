@@ -54,6 +54,10 @@ export default {
     query:{
       type:String,
       default:''
+    },
+    showSinger:{
+      type:Boolean,
+      default:true
     }
   },
   components:{
@@ -63,8 +67,7 @@ export default {
   },
   data(){
     return {
-      page:1,
-      showSinger:true,
+      page:1,     
       result:[],
       searchSongs:[],
       zhida:{},
@@ -253,7 +256,7 @@ export default {
   .search-suggest{
     z-index: 1;
     position: absolute;
-    top: 60px;
+    top:0px;
     width: 100%;
     bottom: 0;
     overflow: hidden;

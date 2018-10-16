@@ -7,11 +7,11 @@
     </div>
     <!--搜索输入框-->
     <div class="add-song_search--wrapper">
-      <search-box placeholder="搜索歌曲" @query="search"></search-box>
+      <search-box ref="searchbox" placeholder="搜索歌曲" @query="search"></search-box>
     </div>
     <!--搜索结果页面-->
     <div class="add-song_search--result" v-show="query">
-      <search-suggest :query="query"></search-suggest>
+      <search-suggest :query="query" :showSinger="showSinger" @listScroll="blurInput"></search-suggest>
     </div>
     <!--搜索记录、历史页面-->
     <div class="add-song_search--shortcut" v-show="!query">
@@ -24,13 +24,16 @@
 <script>
 import SearchBox from '@/common/searchbox/SearchBox'  //引入搜索框
 import SearchSuggest from '@/pages/search/components/SearchSuggest'  //引入搜索结果列表
+import {searchMixin} from '@/common/js/mixin'
 
 export default {
   name: 'AddSong',
+  mixins:[searchMixin],
   data() {
       return {    	
         showFlag:false,
-        query:''
+        query:'',
+        showSinger:false
       }
   },
   components:{
@@ -48,7 +51,8 @@ export default {
 /*****搜索框的值操作关联**********/
     search(item){
       this.query=item
-    }
+    },
+
   }
 
 }
@@ -90,9 +94,8 @@ export default {
 /*搜索结果列表定位样式*/
   .add-song_search--result{
     position: absolute;
-    top:44px;
+    top:104px;
     width: 100%;
     bottom: 0;
-    overflow: hidden;
   }
 </style>

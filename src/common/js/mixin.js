@@ -81,3 +81,20 @@ export const playerMixin = {
 	  	})
 	}
 }
+
+//新建组件，调用组件搜索结果的共享方法
+export const searchMixin = {
+	computed:{
+		...mapGetters([
+      		
+    	])
+	},
+	methods:{
+/*********滚动前，收起键盘****************/
+	    blurInput(){
+	      //执行子组件搜索框的事件，这个事件操作input标签收起键盘
+	      this.$refs.searchbox.blur()
+	    },
+		
+	}
+}
