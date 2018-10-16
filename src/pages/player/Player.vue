@@ -116,7 +116,7 @@
  *从vuex中getters映射的state中获取数据
 */
 
-import {mapGetters,mapMutations} from 'vuex'
+import {mapGetters,mapMutations,mapActions} from 'vuex'
 import animations from 'create-keyframe-animation'
 import ProgressBar from './components/ProgressBar'
 import ProgressCircle from './components/ProgressCircle'
@@ -283,6 +283,7 @@ export default {
   		//h5播放器标签有哦属性，@canplay，当获取到资源的时候执行
   		//这里设置变量，作为是否准备好才可以进行切换下一首
   		this.songReady = true
+      this.savePlayHistory(this.currentSong)
   	},
   	error(){
   		//当url资源获取不到时，因为设置了变量ready才能切换，那功能就奔溃了
@@ -473,7 +474,10 @@ export default {
   		setFullScreen:'SET_FULL_SCREEN',
   		setPlayingState:'SET_PLAYING_STATE',
   		
-  	})
+  	}),
+    ...mapActions([
+      'savePlayHistory'
+    ])
 
   },
   //监听当前歌曲改变时播放音乐

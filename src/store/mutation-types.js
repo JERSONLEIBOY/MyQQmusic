@@ -20,3 +20,6 @@ export const SET_TOPLIST = 'SET_TOPLIST'
 
 /*存入搜索历史数据的方法名*/
 export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY'
+
+/*存入搜索历史数据的方法名*/
+export const SET_PLAY_HISTORY = 'SET_PLAY_HISTORY'

@@ -15,7 +15,20 @@
     </div>
     <!--搜索记录、历史页面-->
     <div class="add-song_search--shortcut" v-show="!query">
-      
+      <switches 
+        :switches="switches" 
+        :currentIndex="currentIndex"
+        @switch="switchItem"
+      ></switches>
+      <div class="add-song_list--wrapper">
+        <scroll v-if="currentIndex===0" :data="playHistory">
+          <song-list :songs="playHistory" @select="selectSong"></song-list>
+        </scroll>
+
+        <scroll v-if="currentIndex===1" :data="searchHistory">
+          <song-list :songs="playHistory" @select="selectSong"></song-list>
+        </scroll>
+      </div> 
     </div>
   </div>
 </transition>
@@ -25,6 +38,11 @@
 import SearchBox from '@/common/searchbox/SearchBox'  //引入搜索框
 import SearchSuggest from '@/pages/search/components/SearchSuggest'  //引入搜索结果列表
 import {searchMixin} from '@/common/js/mixin'
+import Switches from '@/common/switches/Switches'
+import {mapGetters,mapActions} from 'vuex'
+import Scroll from '@/common/scroll/Scroll'
+import SongList from '@/common/musiclist/components/SongList'
+import Song from '@/common/js/song'
 
 export default {
   name: 'AddSong',
@@ -33,12 +51,25 @@ export default {
       return {    	
         showFlag:false,
         query:'',
-        showSinger:false
+        showSinger:false,
+        currentIndex:0, //传入选项卡的状态
+        switches:[
+          {name:'最近播放'},
+          {name:'搜索历史'}
+        ]
       }
   },
   components:{
     SearchBox,
-    SearchSuggest
+    SearchSuggest,
+    Switches,
+    SongList,
+    Scroll
+  },
+  computed:{
+    ...mapGetters([
+      'playHistory'
+    ])
   },
   methods:{
 /*****控制整个页面的打开关闭**********/
@@ -52,8 +83,20 @@ export default {
     search(item){
       this.query=item
     },
-
-  }
+/********选项卡切换传入状态，动态高亮**************/
+    switchItem(index){
+      this.currentIndex = index
+    },
+/*******点击添加播放记录到播放列表*******************/
+    selectSong(song,index){
+      if(index!==0){
+        this.insertSong(new Song(song))
+      }
+    },
+    ...mapActions([
+      'insertSong'
+    ])
+  },
 
 }
 </script>
@@ -97,5 +140,9 @@ export default {
     top:104px;
     width: 100%;
     bottom: 0;
+  }
+/*选项卡样式*/
+  .add-song_search--shortcut{
+    margin: 20px;
   }
 </style>

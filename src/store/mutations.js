@@ -47,5 +47,9 @@ const mutations = {
 	[types.SET_SEARCH_HISTORY](state,history){	//state固定，SEARCH_HISTORY是参数
 		state.searchHistory = history
 	},
+	/*存入播放历史数据的方法*/
+	[types.SET_PLAY_HISTORY](state,history){	//state固定，PLAY_HISTORY是参数
+		state.playHistory = history
+	},
 }
 export default mutations

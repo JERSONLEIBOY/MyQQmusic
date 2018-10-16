@@ -1,7 +1,7 @@
 <template>
   <div class="search-list">
     <ul>
-      <li v-for="item of searches" @click="selectItem(item)">
+      <li v-for="(item,index) of searches" @click="selectItem(item)">
         <p>{{item}}</p>
         <i class="iconfont" @click.stop="deleteOne(item)">&#xe674;</i>
       </li>
@@ -21,8 +21,8 @@ export default {
   },
   methods:{
     //派发给父组件执行
-    selectItem(item){
-      this.$emit('select',item)
+    selectItem(item,index){
+      this.$emit('select',item,index)
     },
     deleteOne(item){
       this.$emit('deleteOne',item)
