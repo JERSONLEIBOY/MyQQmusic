@@ -86,7 +86,7 @@ export const playerMixin = {
 export const searchMixin = {
 	computed:{
 		...mapGetters([
-      		
+      		'searchHistory'
     	])
 	},
 	methods:{
@@ -95,6 +95,9 @@ export const searchMixin = {
 	      //执行子组件搜索框的事件，这个事件操作input标签收起键盘
 	      this.$refs.searchbox.blur()
 	    },
-		
+		/********获取热门关键词子组件的值********/
+	  	addQuery(item){
+	  		this.$refs.searchbox.setQuery(item)
+	  	},
 	}
 }

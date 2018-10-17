@@ -52,7 +52,6 @@ export default {
     },
     ...mapGetters([
       'singer',
-      'searchHistory'
     ])
   },
   data(){
@@ -74,10 +73,6 @@ export default {
           path:`/search/${this.singer.id}`
         })
       },
-/********获取热门关键词子组件的值********/
-  	addQuery(item){
-  		this.$refs.searchbox.setQuery(item)
-  	},
     getHotkey(item){
       this.hotkey=item
     },

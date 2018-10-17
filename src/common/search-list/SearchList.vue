@@ -21,8 +21,8 @@ export default {
   },
   methods:{
     //派发给父组件执行
-    selectItem(item,index){
-      this.$emit('select',item,index)
+    selectItem(item){
+      this.$emit('select',item)
     },
     deleteOne(item){
       this.$emit('deleteOne',item)

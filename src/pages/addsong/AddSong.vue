@@ -21,12 +21,26 @@
         @switch="switchItem"
       ></switches>
       <div class="add-song_list--wrapper">
-        <scroll v-if="currentIndex===0" :data="playHistory">
-          <song-list :songs="playHistory" @select="selectSong"></song-list>
+        <scroll 
+          class="add-song_list--scroll" 
+          ref="songList" 
+          v-if="currentIndex===0" 
+          :data="playHistory"
+        >
+          <div class="add-song_list">
+            <song-list :songs="playHistory" @select="selectSong"></song-list>
+          </div>          
         </scroll>
 
-        <scroll v-if="currentIndex===1" :data="searchHistory">
-          <song-list :songs="playHistory" @select="selectSong"></song-list>
+        <scroll 
+          class="add-song_list--scroll" 
+          ref="searchList" 
+          v-if="currentIndex===1" 
+          :data="searchHistory"
+        >
+          <div class="add-song_list">
+            <search-list :searches="searchHistory" @select="addQuery" @deleteOne="deleteSearchHistory"></search-list>
+          </div>
         </scroll>
       </div> 
     </div>
@@ -42,6 +56,7 @@ import Switches from '@/common/switches/Switches'
 import {mapGetters,mapActions} from 'vuex'
 import Scroll from '@/common/scroll/Scroll'
 import SongList from '@/common/musiclist/components/SongList'
+import SearchList from '@/common/search-list/SearchList'
 import Song from '@/common/js/song'
 
 export default {
@@ -64,6 +79,7 @@ export default {
     SearchSuggest,
     Switches,
     SongList,
+    SearchList,
     Scroll
   },
   computed:{
@@ -75,6 +91,14 @@ export default {
 /*****控制整个页面的打开关闭**********/
     show(){
       this.showFlag = true 
+      //解决无法滚动问题，因为display为none，高度未渲染
+      setTimeout(()=>{
+        if(this.currentIndex===0){
+          this.$refs.songList.refresh()
+        }else{
+          this.$refs.searchList.refresh()
+        }
+      },20)
     },
     hidden(){
       this.showFlag = false
@@ -94,7 +118,8 @@ export default {
       }
     },
     ...mapActions([
-      'insertSong'
+      'insertSong',
+      'deleteSearchHistory',
     ])
   },
 
@@ -144,5 +169,15 @@ export default {
 /*选项卡样式*/
   .add-song_search--shortcut{
     margin: 20px;
+  }
+  .add-song_list--wrapper{
+    position: absolute;
+    top: 165px;
+    bottom: 0;
+    width: 100%;
+  }
+  .add-song_list--scroll{
+    height: 100%;
+    overflow: hidden;
   }
 </style>
