@@ -44,6 +44,12 @@
         </scroll>
       </div> 
     </div>
+    <!--顶部弹窗提示-->
+    <top-tip ref="topTip">
+      <div class="add-song_tip--title">
+        <span>一首歌曲已经添加到播放队列</span>
+      </div>
+    </top-tip>
   </div>
 </transition>
 </template>
@@ -58,6 +64,7 @@ import Scroll from '@/common/scroll/Scroll'
 import SongList from '@/common/musiclist/components/SongList'
 import SearchList from '@/common/search-list/SearchList'
 import Song from '@/common/js/song'
+import TopTip from '@/common/toptip/TopTip'
 
 export default {
   name: 'AddSong',
@@ -80,7 +87,8 @@ export default {
     Switches,
     SongList,
     SearchList,
-    Scroll
+    Scroll,
+    TopTip
   },
   computed:{
     ...mapGetters([
@@ -115,7 +123,12 @@ export default {
     selectSong(song,index){
       if(index!==0){
         this.insertSong(new Song(song))
+        this.showTip()
       }
+    },
+/*封装点击歌曲打开提示弹窗show*/
+    showTip(){
+      this.$refs.topTip.show()
     },
     ...mapActions([
       'insertSong',
@@ -179,5 +192,15 @@ export default {
   .add-song_list--scroll{
     height: 100%;
     overflow: hidden;
+  }
+/*弹窗顶部提示样式*/
+  .add-song_tip--title{
+    height: 40px;
+    text-align: center;
+    color: #fff;
+  }
+  .add-song_tip--title span{
+    line-height: 40px;
+    font-size: 14px;
   }
 </style>
