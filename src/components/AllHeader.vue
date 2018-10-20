@@ -1,6 +1,7 @@
 <template>
   <div class="allheader">
     <h1>高仿QQ音乐</h1>
+    <router-link to="/user" tag="i" class="iconfont">&#xe640;</router-link>
   </div>
 </template>
 
@@ -26,5 +27,13 @@ export default {
   .allheader h1{
     font-size: 16px;
     line-height: 44px;
+  }
+  .allheader i{
+    position: absolute;
+    right: 5px;
+    top: 0;
+    line-height: 44px;
+    font-size: 24px;
+    color: #fff;
   }
 </style>

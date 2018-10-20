@@ -7,6 +7,7 @@ import Rank from '@/pages/rank/Rank'
 import Search from '@/pages/search/Search'
 import RecommendDetail from '@/pages/recommend/components/RecommendDetail'
 import RankDetail from '@/pages/rank/components/RankDetail'
+import User from '@/pages/user-center/UserCenter'
 
 Vue.use(Router)
 
@@ -55,6 +56,12 @@ export default new Router({
         name: 'SearchDetail',
         component: SingerDetail,
       }]
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: User,
+      
     }
   ]
 })
