@@ -13,6 +13,10 @@ const SEARCH_MAX_LENGTH = 15	//定义搜索历史最多为15个存如数组
 const PLAY_KEY = '__play__'
 const PLAY_MAX_LENGTH = 200
 
+/*新建一个本地缓存的变量*/
+const FAVORITE_KEY = '__favorite__'
+const FAVORITE_MAX_LENGTH = '200'
+
 //操作搜索历史数组的方法
 function insertArray(arr,val,maxLen,compare){	//(搜索记录数组，添加的项，最大数量，筛选方法)
 	console.log(arr)
@@ -92,4 +96,31 @@ export function savePlay(song){
 /*****给state默认读取本地缓存**********/
 export function loadPlay(){
 	return storage.get(PLAY_KEY,[])
+}
+
+
+/*****存储本地缓存————我喜欢的*********/
+export function saveFavorite(song){
+	let songs = storage.get(FAVORITE_KEY,[])
+	insertArray(songs,song,FAVORITE_MAX_LENGTH,(item)=>{
+		return item.id===song.id
+	})
+	storage.set(FAVORITE_KEY,songs)
+	return songs
+}
+/*************删除本地缓存中的搜索历史***********************************/
+export function deleteFavorite(song){
+	//如果已有历史就get缓存中的数组，没有就空数组
+	let songs = storage.get(SEARCH_KEY,[])	//(自定义key,无值默认空数组)
+	//对传入的项与已有数组进行操作
+	deleteFromArray(songs,(item)=>{
+		return item.id===song.id
+	})
+	//把操作过后的数组set就直接替换掉原历史
+	storage.set(FAVORITE_KEY,songs)
+	return songs
+}
+/*****给state默认读取本地缓存**********/
+export function loadFavorite(){
+	return storage.get(FAVORITE_KEY,[])
 }

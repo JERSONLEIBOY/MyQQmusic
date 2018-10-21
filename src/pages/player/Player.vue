@@ -68,7 +68,7 @@
 	    		<span class="iconfont" @click="prev">&#xe62c;</span>
 	    		<span class="iconfont" :class="playIcon" @click="togglePlaying"></span>
 	    		<span class="iconfont" @click="next">&#xe62d;</span>
-	    		<span class="iconfont">&#xe640;</span>
+	    		<span class="iconfont" :class="getFavoriteIcon(currentSong)" @click="toggleFavorite(currentSong)"></span>
     		</div> 		
     	</div>
 	</div>
@@ -176,6 +176,7 @@ export default {
   	open(){
   		this.setFullScreen(true)
   	},
+    
   	//计算x,y,scale的值，封装进方法里
   	_getPosAndScale(){
   		const targetWidth = 40;	//小图片宽度
@@ -697,6 +698,9 @@ export default {
 		font-size: 38px;
 		color: #31c27c;
 	}
+  .player-normal_operators span:last-child{
+    color: red;
+  }
 	.player-normal_progress-wrapper{
 		display: flex;
 		align-items: center;

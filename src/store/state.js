@@ -3,7 +3,7 @@
  *输出state
 */
 import {playMode} from '@/common/js/config'	//引入状态码
-import {loadSearch,loadPlay} from '@/common/js/cache'	//引入获取本地缓存的方法
+import {loadSearch,loadPlay,loadFavorite} from '@/common/js/cache'	//引入获取本地缓存的方法
 
 const state = {
 	/*歌手数据*/
@@ -23,6 +23,8 @@ const state = {
 	searchHistory:loadSearch(),	//如果本地缓存有数据就用本地缓存
 	/*播放历史*/
 	playHistory:loadPlay(),
+	/*喜欢的歌*/
+	favoriteList:loadFavorite(),
 }
 
 export default state

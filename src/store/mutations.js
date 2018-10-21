@@ -51,5 +51,9 @@ const mutations = {
 	[types.SET_PLAY_HISTORY](state,history){	//state固定，PLAY_HISTORY是参数
 		state.playHistory = history
 	},
+	/*存入喜欢的歌数据的方法*/
+	[types.SET_FAVORITE_LIST](state,list){	//state固定，PLAY_list是参数
+		state.favoriteList = list
+	},
 }
 export default mutations

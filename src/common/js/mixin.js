@@ -1,5 +1,5 @@
 //相当于一个组件，给多个组件定义重复的多个生命周期等
-import {mapGetters,mapMutations} from 'vuex'	//引用state
+import {mapGetters,mapMutations,mapActions} from 'vuex'	//引用state
 import {playMode} from './config.js'	//引入公共变量，播放模式
 import {shuffle} from '@/common/js/util'
 
@@ -45,6 +45,7 @@ export const playerMixin = {
 	  		'mode',	//当前播放模式
 	  		'sequenceList',	//播放列表
 	  		'currentSong',	//当前歌曲的数据渲染进页面
+	  		'favoriteList',
 	  	])
 	},
 	methods:{
@@ -73,12 +74,41 @@ export const playerMixin = {
 	  		//设置当前序列
 	  		this.setCurrentIndex(index)
 	  	},
+	  	//判断当前歌曲是否是我喜欢的
+	  	isFavorite(song){
+	  		const index = this.favoriteList.findIndex((item)=>{
+	  			return item.id===song.id 	//song是调用此方法传入的item
+	  		})
+	  		//当找到index则当前歌曲是收藏的，而我们不需要具体index，直接>-1即可
+	  		return index>-1
+	  	},
+	  	//收藏按钮的动态图标
+	    getFavoriteIcon(song){
+	    	if(this.isFavorite(song)){
+	    		return 'icon-xihuan1'
+	    	}else{
+	    		return 'icon-xihuan'
+	    	}
+	    },
+	    toggleFavorite(song){
+	    	if(this.isFavorite(song)){
+	    		//当前歌曲是收藏的，点击就是取消收藏
+	    		this.deleteFavoriteList(song)
+	    	}else{
+	    		this.saveFavoriteList(song)
+	    	}
+	    },
 	  	/*存入点击事件触发的是否展示数据*/
 	  	...mapMutations({
 	  		setPlayMode:'SET_PLAY_MODE',
 	  		setPlaylist:'SET_PLAYLIST',
 	  		setCurrentIndex:'SET_CURRENT_INDEX',
-	  	})
+	  	}),
+	  	/*设置action本地缓存的*/
+	  	...mapActions([
+	  		'saveFavoriteList',
+	  		'deleteFavoriteList'
+	  	])
 	}
 }
 

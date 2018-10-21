@@ -33,3 +33,6 @@ export const searchHistory = state=> state.searchHistory
 /*播放历史数据getter映射*/
 export const playHistory = state=> state.playHistory
 
+/*播放历史数据getter映射*/
+export const favoriteList = state=> state.favoriteList
+

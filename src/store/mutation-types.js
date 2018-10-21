@@ -23,3 +23,6 @@ export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY'
 
 /*存入搜索历史数据的方法名*/
 export const SET_PLAY_HISTORY = 'SET_PLAY_HISTORY'
+
+/*存入喜欢的歌的方法名*/
+export const SET_FAVORITE_LIST = 'SET_FAVORITE_LIST'
