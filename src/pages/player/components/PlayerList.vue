@@ -12,7 +12,7 @@
           <li ref="listItem" v-for="(item,index) of sequenceList" :key="item.id" @click="selectItem(item,index)">
             <i class="iconfont" :class="getCurrentIcon(item)"></i>
             <p>{{item.name}}</p>
-            <i class="iconfont">&#xe703;</i>
+            <i class="iconfont player-list_content--favorite" :class="getFavoriteIcon(item)" @click.stop="toggleFavorite(item)"></i>
             <i class="iconfont" @click.stop="deleteOne(item)">&#xe674;</i>
           </li>
         </transition-group>
@@ -203,6 +203,9 @@ import AddSong from '@/pages/addsong/AddSong' //引入添加歌曲到列表公�
   .player-list_content i{
     margin-right: 10px;
     font-size: 14px;
+  }
+  .player-list_content--favorite{
+    color: red;
   }
   .player-list_content i:last-child{
     margin-right: 0;
